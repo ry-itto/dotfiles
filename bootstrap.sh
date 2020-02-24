@@ -3,7 +3,7 @@ for dotfile in `find . -maxdepth 1 | xargs basename | grep -E '^\..+'`;
 do
     if [ $dotfile = '.git' ]; then continue; fi
     echo "link $(pwd)/$dotfile to ~/$dotfile"
-    ln -is $(pwd)/$dotfile ~/$dotfile
+    ln -fs $(pwd)/$dotfile ~/$dotfile
 done
 
 # homebrew
