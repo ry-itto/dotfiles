@@ -1,6 +1,7 @@
 # link dotfiles
-for dotfile in `find . -maxdepth 1 -type f | xargs basename | grep '^\.'`;
+for dotfile in `find . -maxdepth 1 | xargs basename | grep -E '^\..+'`;
 do
+    if [ $dotfile = '.git' ]; then continue; fi
     echo "link $(pwd)/$dotfile to ~/$dotfile"
     ln -is $(pwd)/$dotfile ~/$dotfile
 done
@@ -11,6 +12,11 @@ if ! type "brew" > /dev/null; then
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
-echo 'Install `brew` dependencies...'
-brew bundle --global
+brew bundle check --global
+if [ $? -ne 0 ]; then
+    echo 'Install `brew` dependencies...'
+    brew bundle --global
+else
+    echo '`brew` dependencies are satisfied :smile:' | emojify
+fi
 
