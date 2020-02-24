@@ -10,6 +10,7 @@ brew 'nodebrew'
 # iOS
 brew 'carthage'
 brew "xcodegen"
+brew 'mint'
 
 # Flutter
 brew 'usbmuxd'
