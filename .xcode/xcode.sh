@@ -3,5 +3,6 @@ defaults write com.apple.dt.Xcode ShowBuildOperationDuration YES
 
 # コア数を取得
 cores=`system_profiler SPHardwareDataType | grep -o 'Cores:\s\d' | sed -e 's/[^0-9]//g'`
+# アプリをビルドする時に並列でビルドする
 defaults write com.apple.dt.Xcode IDEBuildOperationMaxNumberOfConcurrentCompileTasks $cores
 
