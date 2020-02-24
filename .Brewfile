@@ -29,7 +29,6 @@ brew 'yarn'
 
 # ツール
 brew 'hub'
-brew 'mas'
 brew 'fzf'
 brew 'jq'
 brew 'gibo'
@@ -37,7 +36,6 @@ brew 'tig'
 brew 'tree'
 brew 'nkf'
 brew 'git'
-brew 'neovim'
 brew 'emojify'
 brew 'mysql'
 brew 'nvim'
@@ -47,6 +45,8 @@ brew 'protobuf'
 
 # Cask
 cask "qmk-toolbox"
+cask 'clipy'
+cask 'shiftIt'
 
 # MacOS App
 mas "DevCleaner", id: 1388020431
