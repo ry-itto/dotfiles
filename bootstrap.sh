@@ -20,3 +20,7 @@ else
     echo '`brew` dependencies are satisfied :smile:' | emojify
 fi
 
+# macOS and Xcode setting
+echo 'macOS and Xcode setting...'
+./.macos/macos.sh
+./.xcode/xcode.sh
