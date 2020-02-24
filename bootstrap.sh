@@ -21,6 +21,8 @@ else
 fi
 
 # macOS and Xcode setting
-echo 'macOS and Xcode setting...'
-./.macos/macos.sh
-./.xcode/xcode.sh
+if [ "$(uname)" == 'Darwin' ]; then
+    echo 'macOS and Xcode setting...'
+    ./.macos/macos.sh
+    ./.xcode/xcode.sh
+fi
