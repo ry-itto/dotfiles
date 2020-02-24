@@ -1,0 +1,56 @@
+# zsh関係
+brew 'zsh'
+brew 'zplug'
+
+# env系
+brew 'rbenv'
+brew 'pyenv'
+brew 'nodebrew'
+
+# iOS
+brew 'carthage'
+brew "xcodegen"
+
+# Flutter
+brew 'usbmuxd'
+brew "libimobiledevice", args: ["HEAD"]
+brew 'ideviceinstaller'
+brew 'ios-deploy'
+
+# プログラミング言語
+brew 'go'
+tap "dart-lang/dart"
+brew 'dart'
+brew 'rustup'
+brew 'elm'
+
+# Web Front
+brew 'yarn'
+
+# ツール
+brew 'hub'
+brew 'mas'
+brew 'fzf'
+brew 'jq'
+brew 'gibo'
+brew 'tig'
+brew 'tree'
+brew 'nkf'
+brew 'git'
+brew 'neovim'
+brew 'emojify'
+brew 'mysql'
+brew 'nvim'
+
+# gPRC
+brew 'protobuf'
+
+# Cask
+cask "qmk-toolbox"
+
+# MacOS App
+mas "DevCleaner", id: 1388020431
+mas "Keynote", id: 409183694
+mas "Realm Browser", id: 1007457278
+mas "Slack", id: 803453959
+mas "TweetDeck", id: 485812721

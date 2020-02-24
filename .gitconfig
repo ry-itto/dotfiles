@@ -1,0 +1,8 @@
+[commit]
+    template=~/.commit_template
+[user]
+    email = horusu.dqx@gmail.com
+    name = ryoya ito
+[core]
+    excludesfile = ~/.gitignore_global
+	editor = vim
