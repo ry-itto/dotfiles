@@ -1,3 +1,5 @@
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+
 # Xcode 上でビルド時間を表示する
 defaults write com.apple.dt.Xcode ShowBuildOperationDuration YES
 
@@ -8,4 +10,4 @@ defaults write com.apple.dt.Xcode IDEBuildOperationMaxNumberOfConcurrentCompileT
 
 # カラーテーマを追加
 echo 'add color themes...'
-cp xcode/themes/* ~/Library/Developer/Xcode/UserData/FontAndColorThemes
+cp $SCRIPT_DIR/xcode/themes/* ~/Library/Developer/Xcode/UserData/FontAndColorThemes
