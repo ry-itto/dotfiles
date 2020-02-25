@@ -25,4 +25,5 @@ if [ "$(uname)" == 'Darwin' ]; then
     echo 'macOS and Xcode setting...'
     ./.macos/macos.sh
     ./.xcode/xcode.sh
+    ./.iterm/iterm.sh
 fi
