@@ -1,7 +1,7 @@
 # link dotfiles
 for dotfile in `find . -maxdepth 1 | xargs basename | grep -E '^\..+'`;
 do
-    if [ $dotfile = '.git' ]; then continue; fi
+    if [ $dotfile = '.git' ]  || [ $dotfile = '.gitmodules' ] || [ $dotfile = '.ruby-version' ] || [ $dotfile = '.gitignore' ]; then continue; fi
     echo "link $(pwd)/$dotfile to ~/$dotfile"
     ln -fns $(pwd)/$dotfile ~/$dotfile
 done
