@@ -1,0 +1,6 @@
+[[plugins]]
+repo = 'arcticicestudio/nord-vim'
+hook_add = '''
+    colorscheme nord
+    syntax on
+'''

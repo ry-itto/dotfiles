@@ -49,7 +49,7 @@ alias cbn='git symbolic-ref --short HEAD|tr -d \"\\n\"'
 alias calendar='open https://calendar.google.com'
 
 ## vim -> nvim
-alias vim=nvim
+alias vim='nvim'
 
 ## GitHub CLI
 alias h='hub browse'

@@ -20,6 +20,9 @@ if dein#load_state('~/.cache/dein')
   " Add or remove your plugins here like this:
   "call dein#add('Shougo/neosnippet.vim')
   "call dein#add('Shougo/neosnippet-snippets')
+  let s:toml_dir = $HOME . '/.vim/rc'
+  let s:toml = s:toml_dir . '/dein.toml'
+  call dein#load_toml(s:toml, {'lazy': 0})
 
   " Required:
   call dein#end()
