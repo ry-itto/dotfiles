@@ -27,3 +27,9 @@ if [ "$(uname)" == 'Darwin' ]; then
     ./.xcode/xcode.sh
     ./.iterm/iterm.sh
 fi
+
+# install .ruby-version's ruby if not installed
+if [ "$(rbenv versions --bare | grep $(rbenv local))" = '' ]; then
+    rbenv install
+fi
+bundle install
