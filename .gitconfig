@@ -5,4 +5,4 @@
     name = ryoya ito
 [core]
     excludesfile = ~/.gitignore_global
-	editor = vim
+	editor = nvim
