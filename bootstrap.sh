@@ -25,7 +25,7 @@ homebrew() {
     brew bundle check --global
     if [ $? -ne 0 ]; then
         echo 'Install `brew` dependencies...'
-        brew bundle --global
+        brew bundle --global -v
     else
         echo '`brew` dependencies are satisfied :smile:' | emojify
     fi
