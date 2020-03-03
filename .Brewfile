@@ -45,6 +45,7 @@ brew 'nvim'
 brew 'protobuf'
 
 # Cask
+tap 'homebrew/cask-drivers'
 cask "qmk-toolbox"
 cask 'clipy'
 cask 'shiftIt'
