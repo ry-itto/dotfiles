@@ -5,6 +5,7 @@ link_dotfiles() {
     .gitignore
     .ruby-version
     .gitmodules
+    .github
     '''
 
     for dotfile in `find . -maxdepth 1 | xargs basename | grep -E '^\..+'`;
