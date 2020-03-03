@@ -1,7 +1,15 @@
 link_dotfiles() {
+    # ignore files that should not link to $HOME
+    dotfile_ignore='''
+    .git
+    .gitignore
+    .ruby-version
+    .gitmodules
+    '''
+
     for dotfile in `find . -maxdepth 1 | xargs basename | grep -E '^\..+'`;
     do
-        if [ $dotfile = '.git' ]  || [ $dotfile = '.gitmodules' ] || [ $dotfile = '.ruby-version' ] || [ $dotfile = '.gitignore' ]; then continue; fi
+        if [ "$(echo $dotfile_ignore | grep $dotfile)" ] ; then continue; fi
         echo "link $(pwd)/$dotfile to ~/$dotfile"
         ln -fns $(pwd)/$dotfile ~/$dotfile
     done
