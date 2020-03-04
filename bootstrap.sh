@@ -11,8 +11,8 @@ link_dotfiles() {
     for dotfile in `find . -maxdepth 1 | xargs basename | grep -E '^\..+'`;
     do
         if [ "$(echo $dotfile_ignore | grep $dotfile)" ] ; then continue; fi
-        echo "link $(pwd)/$dotfile to ~/$dotfile"
-        ln -fns $(pwd)/$dotfile ~/$dotfile
+        echo "link $(pwd)/$dotfile to $HOME/$dotfile"
+        ln -fns $(pwd)/$dotfile $HOME/$dotfile
     done
 }
 
