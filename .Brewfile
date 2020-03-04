@@ -44,6 +44,10 @@ brew 'nvim'
 # gPRC
 brew 'protobuf'
 
+# tap and install mas to use `cask` and `mas`
+tap 'homebrew/cask'
+brew 'mas'
+
 # Cask
 tap 'homebrew/cask-drivers'
 cask "qmk-toolbox"
