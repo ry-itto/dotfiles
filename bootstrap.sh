@@ -50,14 +50,15 @@ homebrew() {
 
 setting() {
     echo 'macOS and Xcode setting...'
-    ./.macos/macos.sh
-    ./.xcode/xcode.sh
+    ./macos/macos.sh
+    ./xcode/xcode.sh
     ./.iterm/iterm.sh
 }
 
 ruby_bundle() {
     # install .ruby-version's ruby if not installed
     if [ "$(rbenv versions --bare | grep $(rbenv local))" = '' ]; then
+        echo 'Install ruby...'
         rbenv install
     fi
     bundle install
