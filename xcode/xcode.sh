@@ -8,6 +8,10 @@ cores=`system_profiler SPHardwareDataType | grep -o 'Cores:\s\d' | sed -e 's/[^0
 # アプリをビルドする時に並列でビルドする
 defaults write com.apple.dt.Xcode IDEBuildOperationMaxNumberOfConcurrentCompileTasks $cores
 
+# submodule setup
+git submodule init
+git submodule update
+
 # カラーテーマを追加
 echo 'add color themes...'
 cp $SCRIPT_DIR/xcode/themes/* ~/Library/Developer/Xcode/UserData/FontAndColorThemes
