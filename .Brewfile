@@ -53,6 +53,7 @@ tap 'homebrew/cask-drivers'
 cask "qmk-toolbox"
 cask 'clipy'
 cask 'shiftIt'
+cask 'karabiner-elements'
 
 # MacOS App
 mas "DevCleaner", id: 1388020431
