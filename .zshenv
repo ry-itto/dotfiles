@@ -53,3 +53,6 @@ export PATH=$HOME/.pyenv/bin:$PATH
 
 # zplug
 export ZPLUG_HOME=/usr/local/opt/zplug
+
+# zsh bin
+export PATH=$PATH:$HOME/.zsh/bin
