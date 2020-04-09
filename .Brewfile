@@ -6,6 +6,7 @@ brew 'zplug'
 brew 'rbenv'
 brew 'pyenv'
 brew 'nodebrew'
+brew 'kylef/formulae/swiftenv'
 
 # iOS
 brew 'carthage'
