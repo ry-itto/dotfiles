@@ -15,6 +15,10 @@ path=(
 ## gitのリポジトリ情報をプロンプトに表示する
 autoload -U vcs_info
 
+# 定義関数読み込み
+source $HOME/.zsh/functions/git.zsh
+source $HOME/.zsh/functions/github.zsh
+
 # 文字コードをUTF-8に設定
 export LANG=ja_JP.UTF-8
 

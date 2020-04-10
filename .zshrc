@@ -51,9 +51,6 @@ alias calendar='open https://calendar.google.com'
 ## vim -> nvim
 alias vim='nvim'
 
-## GitHub CLI
-alias h='hub browse'
-
 # プロンプトが表示されるたびにプロンプト文字列を評価、置換する
 setopt prompt_subst
 # プロンプトが表示されるたびに呼ばれる関数
