@@ -14,7 +14,7 @@ jobs:
       env:
         cache-name: cache-brew-dependencies
       with:
-        path: /usr/local/Cellar
+        path: /usr/local
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.Brewfile.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
