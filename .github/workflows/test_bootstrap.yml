@@ -9,5 +9,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Cache brew dependencies
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-brew-dependencies
+      with:
+        path: /usr/local/Cellar
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.Brewfile.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
     - name: Test bootstrap.sh
       run: ./bootstrap.sh
