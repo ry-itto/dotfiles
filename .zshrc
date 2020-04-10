@@ -102,4 +102,4 @@ eval "$(pyenv init -)"
 eval "$(swiftenv init -)"
 
 # emacs風キーバインドの復活
-bindkey -e
+bindkey -v
