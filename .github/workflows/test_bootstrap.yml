@@ -14,8 +14,8 @@ jobs:
       env:
         cache-name: cache-brew-dependencies
       with:
-        path: /usr/local
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.Brewfile.lock.json') }}
+        path: ~/Library/Caches/Homebrew
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.Brewfile') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
           ${{ runner.os }}-build-
