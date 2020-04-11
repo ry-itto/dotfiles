@@ -30,7 +30,7 @@ brew 'elm'
 brew 'yarn'
 
 # ツール
-brew 'hub'
+brew 'gh'
 brew 'fzf'
 brew 'jq'
 brew 'gibo'
