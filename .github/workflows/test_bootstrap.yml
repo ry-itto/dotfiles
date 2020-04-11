@@ -9,5 +9,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Cache brew dependencies (download)
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-brew-dependencies
+      with:
+        path: ~/Library/Caches/Homebrew
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.Brewfile') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
     - name: Test bootstrap.sh
       run: ./bootstrap.sh
