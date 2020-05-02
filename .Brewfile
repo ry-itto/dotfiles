@@ -55,6 +55,7 @@ cask "qmk-toolbox"
 cask 'clipy'
 cask 'shiftIt'
 cask 'karabiner-elements'
+cask 'alfred'
 
 # MacOS App
 mas "DevCleaner", id: 1388020431
