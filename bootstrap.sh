@@ -36,7 +36,7 @@ link_dotfiles() {
 homebrew() {
     if ! type "brew" > /dev/null; then
         echo '`brew` not found. Install Homebrew'
-        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     fi
 
     brew bundle check --global
