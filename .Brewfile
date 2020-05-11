@@ -31,6 +31,7 @@ brew 'yarn'
 
 # ツール
 brew 'gh'
+brew 'ghq'
 brew 'fzf'
 brew 'jq'
 brew 'gibo'
