@@ -42,6 +42,7 @@ brew 'git'
 brew 'emojify'
 brew 'mysql'
 brew 'nvim'
+brew 'poetry'
 
 # gPRC
 brew 'protobuf'
