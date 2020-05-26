@@ -52,6 +52,7 @@ setting() {
     echo 'macOS and Xcode setting...'
     ./macos/macos.sh
     ./xcode/xcode.sh
+    ./vscode/vscode.sh
     ./.iterm/iterm.sh
 }
 

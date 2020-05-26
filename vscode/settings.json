@@ -1,0 +1,19 @@
+{
+    "editor.renderWhitespace": "boundary",
+    "git.autofetch": true,
+    "javascript.updateImportsOnFileMove.enabled": "always", 
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "workbench.colorTheme": "Blink (rainglow)",
+    "workbench.iconTheme": "vscode-icons"
+}

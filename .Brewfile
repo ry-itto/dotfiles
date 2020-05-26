@@ -58,6 +58,7 @@ cask 'clipy'
 cask 'shiftIt'
 cask 'karabiner-elements'
 cask 'alfred'
+cask 'visual-studio-code'
 
 # MacOS App
 mas "DevCleaner", id: 1388020431
