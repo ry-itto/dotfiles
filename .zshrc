@@ -48,6 +48,10 @@ alias cbn='git symbolic-ref --short HEAD|tr -d \"\\n\"'
 ## calendar
 alias calendar='open https://calendar.google.com'
 
+# brew 実行時不要なディレクトリのパスが含まれないようにする
+# https://qiita.com/takuya0301/items/695f42f6904e979f0152
+alias brew='PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin brew'
+
 ## vim -> nvim
 alias vim='nvim'
 
@@ -58,10 +62,6 @@ precmd () { vcs_info }
 # スタイル設定
 zstyle ':vcs_info:*' formats "%F{green}%b%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
-
-PROMPT='
-%F{110}%~%f ${vcs_info_msg_0_}
-> '
 
 # フローコントロール無効?
 setopt no_flow_control
@@ -83,6 +83,15 @@ zplug "b4b4r07/emoji-cli"
 
 ## Command 補完
 zplug "zsh-users/zsh-autosuggestions"
+
+## prompt
+zplug "denysdovhan/spaceship-prompt", use:spaceship.zsh, from:github, as:theme
+SPACESHIP_CHAR_SYMBOL='> '
+SPACESHIP_DIR_COLOR=110
+SPACESHIP_DIR_TRUNC=0
+SPACESHIP_GIT_PREFIX=''
+SPACESHIP_GIT_BRANCH_COLOR=green
+SPACESHIP_GIT_STATUS_SHOW=false
 
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "

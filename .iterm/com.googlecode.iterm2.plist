@@ -466,7 +466,7 @@
 	<key>LoadPrefsFromCustomFolder</key>
 	<true/>
 	<key>NSNavLastRootDirectory</key>
-	<string>~/Projects/dotfiles/.iterm</string>
+	<string>~/Documents</string>
 	<key>NSNavPanelExpandedSizeForOpenMode</key>
 	<string>{799, 448}</string>
 	<key>NSQuotedKeystrokeBinding</key>
@@ -1102,7 +1102,7 @@
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>Monaco 12</string>
+			<string>RobotoMonoForPowerline-Regular 12</string>
 			<key>Option Key Sends</key>
 			<integer>0</integer>
 			<key>Prompt Before Closing 2</key>
@@ -1340,12 +1340,20 @@
 	<array>
 		<string>3.3.6</string>
 		<string>3.3.8</string>
-		<string>3.3.4</string>
+		<string>3.3.2</string>
 		<string>3.3.1</string>
 		<string>3.3.7</string>
-		<string>3.2.9</string>
-		<string>3.3.2</string>
+		<string>3.3.9</string>
 		<string>3.3.0</string>
+		<string>3.2.9</string>
+		<string>3.3.4</string>
+	</array>
+	<key>NoSyncBFPRecents</key>
+	<array>
+		<string>Ricty Diminished</string>
+		<string>Roboto Mono for Powerline</string>
+		<string>Roboto Mono Thin for Powerline</string>
+		<string>Roboto Mono Light for Powerline</string>
 	</array>
 	<key>NoSyncFrame_SessionsPreferences</key>
 	<dict>
@@ -1370,7 +1378,11 @@
 	<key>NoSyncInstallationId</key>
 	<string>5BF10686-F657-41B1-9752-56526C6C5620</string>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>46</integer>
+	<integer>73</integer>
+	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
+	<true/>
+	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
+	<integer>0</integer>
 	<key>NoSyncNextAnnoyanceTime</key>
 	<real>586593892.84647202</real>
 	<key>NoSyncOnboardingWindowHasBeenShown</key>
@@ -2121,7 +2133,7 @@
 		</dict>
 	</dict>
 	<key>PrefsCustomFolder</key>
-	<string>/Users/ito_ryoya/Projects/dotfiles/.iterm</string>
+	<string>/Users/ito_ryoya/.iterm</string>
 	<key>Print In Black And White</key>
 	<true/>
 	<key>SUEnableAutomaticChecks</key>
@@ -2133,9 +2145,11 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2020-02-24T10:16:50Z</date>
+	<date>2020-05-26T10:04:14Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
+	<key>SUUpdateGroupIdentifier</key>
+	<integer>1349697702</integer>
 	<key>SUUpdateRelaunchingMarker</key>
 	<false/>
 	<key>SoundForEsc</key>
@@ -2165,7 +2179,7 @@
 	<key>findMode_iTerm</key>
 	<integer>0</integer>
 	<key>iTerm Version</key>
-	<string>3.3.8</string>
+	<string>3.3.9</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>0</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
