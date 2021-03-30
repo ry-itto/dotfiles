@@ -1,3 +1,6 @@
+"Ruby のファイルを高速で開くため、ruby_path を指定する"
+let g:ruby_path="$HOME/.rbenv/shims/ruby"
+
 "文字コードをUTF-8にする"
 set fenc=utf-8
 "バックアップファイルを作らない"
@@ -32,3 +35,4 @@ syntax on
 set shiftwidth=4
 "キーボードから入るタブの数"
 set softtabstop=0
+""
