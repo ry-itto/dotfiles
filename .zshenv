@@ -58,8 +58,3 @@ export ZPLUG_HOME=/usr/local/opt/zplug
 
 # zsh bin
 export PATH=$PATH:$HOME/.zsh/bin
-
-# sdkman
-export SDKMAN_DIR="/Users/ito_ryoya/.sdkman"
-[[ -s "/Users/ito_ryoya/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/ito_ryoya/.sdkman/bin/sdkman-init.sh"
-export JAVA_HOME=/Users/ito_ryoya/.sdkman/candidates/java/current
