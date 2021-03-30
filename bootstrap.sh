@@ -54,6 +54,7 @@ setting() {
     ./xcode/xcode.sh
     ./vscode/vscode.sh
     ./.iterm/iterm.sh
+    ./.vim/init.sh
 }
 
 ruby_bundle() {
