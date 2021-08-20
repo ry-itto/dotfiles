@@ -1,2 +1,7 @@
 .netrwhist
 .DS_Store
+
+.config
+!.config/karabiner/karabiner.json
+!.config/nvim
+
