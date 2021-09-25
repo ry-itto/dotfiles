@@ -1,6 +1,5 @@
 # zsh関係
 brew 'zsh'
-brew 'zplug'
 
 # env系
 brew 'rbenv'
