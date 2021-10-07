@@ -37,6 +37,7 @@ install_deps() {
 	./installers/brew.sh
 	./installers/zplug.sh
 	./installers/rust.sh
+	./installers/flutter.sh
 }
 
 setting() {

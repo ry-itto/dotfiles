@@ -19,8 +19,6 @@ brew 'ios-deploy'
 
 # プログラミング言語
 brew 'go'
-tap "dart-lang/dart"
-brew 'dart'
 
 # ツール
 brew 'gh'
