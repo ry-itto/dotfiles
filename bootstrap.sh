@@ -33,19 +33,10 @@ link_dotfiles() {
     done
 }
 
-homebrew() {
-    if ! type "brew" > /dev/null; then
-        echo '`brew` not found. Install Homebrew'
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-    fi
-
-    brew bundle check --global
-    if [ $? -ne 0 ]; then
-        echo 'Install `brew` dependencies...'
-        brew bundle --global -v
-    else
-        echo '`brew` dependencies are satisfied :smile:' | emojify
-    fi
+install_deps() {
+	./installers/brew.sh
+	./installers/zplug.sh
+	./installers/rust.sh
 }
 
 setting() {
@@ -57,19 +48,10 @@ setting() {
     ./.vim/init.sh
 }
 
-ruby_bundle() {
-    # install .ruby-version's ruby if not installed
-    if [ "$(rbenv versions --bare | grep $(rbenv local))" = '' ]; then
-        echo 'Install ruby...'
-        rbenv install
-    fi
-    bundle install
-}
-
 main() {
     show_header
     link_dotfiles
-    homebrew
+    install_deps
     setting
     ruby_bundle
 }

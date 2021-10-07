@@ -5,7 +5,6 @@ brew 'zsh'
 brew 'rbenv'
 brew 'pyenv'
 brew 'nodebrew'
-brew 'kylef/formulae/swiftenv'
 
 # iOS
 brew 'carthage'
@@ -22,38 +21,25 @@ brew 'ios-deploy'
 brew 'go'
 tap "dart-lang/dart"
 brew 'dart'
-brew 'rustup'
-brew 'elm'
-
-# Web Front
-brew 'yarn'
 
 # ツール
 brew 'gh'
 brew 'ghq'
 brew 'fzf'
 brew 'jq'
-brew 'gibo'
 brew 'tig'
 brew 'tree'
 brew 'nkf'
 brew 'git'
 brew 'emojify'
-brew 'mysql'
 brew 'nvim'
-brew 'poetry'
 
 # gPRC
 brew 'protobuf'
 
-# tap and install mas to use `cask` and `mas`
-tap 'homebrew/cask'
-brew 'mas'
-
 # Cask
+tap 'homebrew/cask'
 tap 'homebrew/cask-drivers'
 cask 'clipy'
-cask 'shiftIt'
 cask 'karabiner-elements'
 cask 'alfred'
-cask 'visual-studio-code'
