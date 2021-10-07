@@ -48,10 +48,6 @@ alias cbn='git symbolic-ref --short HEAD|tr -d \"\\n\"'
 ## calendar
 alias calendar='open https://calendar.google.com'
 
-# brew 実行時不要なディレクトリのパスが含まれないようにする
-# https://qiita.com/takuya0301/items/695f42f6904e979f0152
-alias brew='PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin brew'
-
 ## vim -> nvim
 alias vim='nvim'
 

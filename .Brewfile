@@ -52,16 +52,8 @@ brew 'mas'
 
 # Cask
 tap 'homebrew/cask-drivers'
-cask "qmk-toolbox"
 cask 'clipy'
 cask 'shiftIt'
 cask 'karabiner-elements'
 cask 'alfred'
 cask 'visual-studio-code'
-
-# MacOS App
-mas "DevCleaner", id: 1388020431
-mas "Keynote", id: 409183694
-mas "Realm Browser", id: 1007457278
-mas "Slack", id: 803453959
-mas "TweetDeck", id: 485812721
