@@ -7,9 +7,11 @@ brew 'pyenv'
 brew 'nodebrew'
 
 # iOS
+tap 'robotsandpencils/made'
 brew 'carthage'
 brew "xcodegen"
 brew 'mint'
+brew 'robotsandpencils/made/xcodes'
 
 # Flutter
 brew 'usbmuxd'

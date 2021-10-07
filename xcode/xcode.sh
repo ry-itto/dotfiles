@@ -1,6 +1,5 @@
 if type "xcodebuild" > /dev/null; then
-    echo 'please install xcode before executing this script.'
-    exit 1
+	xcodes install --latest
 fi
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
