@@ -6,6 +6,11 @@ repo = 'wsdjeg/dein-ui.vim'
 
 [[plugins]]
 repo = 'scrooloose/nerdtree'
+hook_add = '''    
+    nnoremap <C-t> :NERDTreeToggle<CR>
+    let g:NERDTreeShowHidden=1
+    let g:NERDTreeShowBookmarks=1
+'''
 
 [[plugins]]
 repo = 'arcticicestudio/nord-vim'
@@ -22,3 +27,7 @@ repo = 'ryanoasis/vim-devicons'
 
 [[plugins]]
 repo = 'junegunn/fzf.vim'
+
+[[plugins]]
+repo = 'neoclide/coc.nvim'
+rev = 'release'
