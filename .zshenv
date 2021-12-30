@@ -46,12 +46,12 @@ export PATH=$PATH:/usr/local/mysql/bin
 
 # cargo(rust)
 export PATH=$PATH:$HOME/.cargo/env
-export PATH="$HOME/.cargo/bin:$PATH"
+export PATH=$PATH:$HOME/.cargo/bin
 
 ## SDK類
-export PATH=$HOME/.nodebrew/current/bin:$PATH
-export PATH=$HOME/.rbenv/bin:$PATH
-export PATH=$HOME/.pyenv/bin:$PATH
+export PATH=$PATH:$HOME/.nodebrew/current/bin
+export PATH=$PATH:$HOME/.rbenv/bin
+export PATH=$PATH:$HOME/.pyenv/bin
 
 # zplug
 export ZPLUG_HOME=$HOME/.zplug
