@@ -34,6 +34,7 @@ brew 'nkf'
 brew 'git'
 brew 'emojify'
 brew 'nvim'
+brew 'tmux'
 
 # gPRC
 brew 'protobuf'
