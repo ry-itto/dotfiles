@@ -101,7 +101,6 @@ zplug load --verbose
 # env系init
 eval "$(rbenv init -)"
 eval "$(pyenv init -)"
-eval "$(swiftenv init -)"
 
 # emacs風キーバインドの復活
 bindkey -e
