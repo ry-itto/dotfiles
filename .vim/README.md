@@ -27,10 +27,10 @@
 
 ### Flutter
 
-| Key | Action              | Description           |
-| --- | ------------------- | --------------------- |
-| fa  | :FlutterRun         | Flutter run           |
-| fq  | :FlutterQuit        | Flutter quit          |
-| fr  | :FlutterHotReload   | Flutter HotReload     |
-| fR  | :FlutterHotRestart  | Flutter HotRestart    |
-| fD  | :FlutterVisualDebug | Flutter Virtual Debug |
+| Key          | Action              | Description           |
+| ------------ | ------------------- | --------------------- |
+| \<leader\>fa | :FlutterRun         | Flutter run           |
+| \<leader\>fq | :FlutterQuit        | Flutter quit          |
+| \<leader\>fr | :FlutterHotReload   | Flutter HotReload     |
+| \<leader\>fR | :FlutterHotRestart  | Flutter HotRestart    |
+| \<leader\>fD | :FlutterVisualDebug | Flutter Virtual Debug |
