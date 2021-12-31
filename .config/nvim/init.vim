@@ -3,8 +3,8 @@ if &compatible
   set nocompatible
 endif
 
-set rtp+=~/.vim
-runtime init/setting.vim
+set rtp+=$HOME/.vim
+runtime init/*.vim
 
 " Required:
 set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim

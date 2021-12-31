@@ -10,20 +10,22 @@
 
 ### File navigation
 
-| Key         | Action          | Description       |
-| ----------- | --------------- | ----------------- |
-| C-t         | :NERDTreeToggle | Toggle NERDTree   |
-| \<leader\>n | :NERDTreeFocus  | Focus to NERDTree |
+| Key | Action          | Description       |
+| --- | --------------- | ----------------- |
+| C-t | :NERDTreeToggle | Toggle NERDTree   |
+| C-n | :NERDTreeFocus  | Focus to NERDTree |
 
-### Code navigation
+### Editor actions
 
-| Key | Action                        | Description           |
-| --- | ----------------------------- | --------------------- |
-| gd  | \<Plug\>(coc-definition)      | Go to definition      |
-| gy  | \<Plug\>(coc-type-definition) | Go to type definition |
-| gi  | \<Plug\>(coc-implementation)  | Go to implementation  |
-| gr  | \<Plug\>(coc-references)      | Go to refrerences     |
-| gb  | \<C-o\>                       | Go back               |
+| Key            | Action                            | Description                       |
+| -------------- | --------------------------------- | --------------------------------- |
+| gd             | \<Plug\>(coc-definition)          | Go to definition                  |
+| gy             | \<Plug\>(coc-type-definition)     | Go to type definition             |
+| gi             | \<Plug\>(coc-implementation)      | Go to implementation              |
+| gr             | \<Plug\>(coc-references)          | Go to refrerences                 |
+| gb             | \<C-o\>                           | Go back                           |
+| \<leader\> aap | \<Plug\>(coc-codeaction-selected) | Code action for current paragraph |
+| \<leader\> aw  | \<Plug\>(coc-codeaction-selected) | Code action for current word      |
 
 ### Flutter
 

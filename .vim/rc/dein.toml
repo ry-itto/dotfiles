@@ -10,7 +10,7 @@ repo = 'wsdjeg/dein-ui.vim'
 repo = 'scrooloose/nerdtree'
 hook_add = '''    
     nnoremap <C-t> :NERDTreeToggle<CR>
-    nnoremap <leader>n :NERDTreeFocus<CR>
+    nnoremap <C-n> :NERDTreeFocus<CR>
     let g:NERDTreeShowHidden=1
     let g:NERDTreeShowBookmarks=1
 '''
