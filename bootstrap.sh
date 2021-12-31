@@ -60,7 +60,6 @@ main() {
     copy_config
     install_deps
     setting
-    ruby_bundle
 }
 
 main
