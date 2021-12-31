@@ -6,6 +6,8 @@ endif
 set rtp+=$HOME/.vim
 runtime init/*.vim
 
+" set rtp+=/opt/homebrew/opt/fzf
+
 " Required:
 set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
 

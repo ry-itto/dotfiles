@@ -23,6 +23,7 @@ brew 'ios-deploy'
 brew 'go'
 
 # ツール
+brew 'ag'
 brew 'gh'
 brew 'ghq'
 brew 'fzf'

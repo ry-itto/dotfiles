@@ -58,3 +58,4 @@ export ZPLUG_HOME=$HOME/.zplug
 
 # zsh bin
 export PATH=$PATH:$HOME/.zsh/bin
+

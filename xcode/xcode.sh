@@ -1,4 +1,4 @@
-if type "xcodebuild" > /dev/null; then
+if ! type "xcodebuild" > /dev/null ; then
 	xcodes install --latest
 fi
 
@@ -13,11 +13,3 @@ cores=`system_profiler SPHardwareDataType | grep -o 'Cores:\s\d' | sed -e 's/[^0
 defaults write com.apple.dt.Xcode IDEBuildOperationMaxNumberOfConcurrentCompileTasks $cores
 # Including whitespace-only lines 空白しかない行の空白を削除
 defaults write com.apple.dt.Xcode DVTTextEditorTrimWhitespaceOnlyLines -bool true
-
-# submodule setup
-git submodule init
-git submodule update
-
-# カラーテーマを追加
-echo 'add color themes...'
-cp $SCRIPT_DIR/xcode/themes/* ~/Library/Developer/Xcode/UserData/FontAndColorThemes

@@ -1,3 +1,6 @@
-FLUTTER_DIR=$HOME/Applications/flutter
+if ! type "flutter" > /dev/null; then
 
-git clone https://github.com/flutter/flutter.git -b stable $FLUTTER_DIR
+    FLUTTER_DIR=$HOME/Applications/flutter
+
+    git clone https://github.com/flutter/flutter.git -b stable $FLUTTER_DIR
+fi

@@ -19,7 +19,16 @@ hook_add = '''
 repo = 'ryanoasis/vim-devicons'
 
 [[plugins]]
+repo = 'junegunn/fzf'
+build = './install --all'
+merged = 0
+
+[[plugins]]
 repo = 'junegunn/fzf.vim'
+depends = ['fzf']
+hook_add = '''
+    let $FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+'''
 
 [[plugins]]
 repo = 'vim-airline/vim-airline'
