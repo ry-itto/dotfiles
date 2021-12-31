@@ -36,5 +36,6 @@ syntax on
 set shiftwidth=4
 "キーボードから入るタブの数"
 set softtabstop=0
-""
+"新しいウィンドウを下に開く"
+set splitbelow
 

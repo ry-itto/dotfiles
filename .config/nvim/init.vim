@@ -4,7 +4,7 @@ if &compatible
 endif
 
 set rtp+=$HOME/.vim
-runtime init/*.vim
+runtime! init/*.vim
 
 " set rtp+=/opt/homebrew/opt/fzf
 
