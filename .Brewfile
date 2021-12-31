@@ -40,6 +40,8 @@ brew 'protobuf'
 # Cask
 tap 'homebrew/cask'
 tap 'homebrew/cask-drivers'
+tap 'homebrew/cask-fonts'
 cask 'clipy'
 cask 'karabiner-elements'
 cask 'alfred'
+cask 'font-hack-nerd-font'

@@ -1,26 +1,19 @@
+# dein
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
 [[plugins]]
 repo = 'wsdjeg/dein-ui.vim'
 
+# File unitilities
 [[plugins]]
 repo = 'scrooloose/nerdtree'
 hook_add = '''    
     nnoremap <C-t> :NERDTreeToggle<CR>
+    nnoremap <leader>n :NERDTreeFocus<CR>
     let g:NERDTreeShowHidden=1
     let g:NERDTreeShowBookmarks=1
 '''
-
-[[plugins]]
-repo = 'arcticicestudio/nord-vim'
-hook_add = '''
-    colorscheme nord
-    syntax on
-'''
-
-[[plugins]]
-repo = 'vim-airline/vim-airline'
 
 [[plugins]]
 repo = 'ryanoasis/vim-devicons'
@@ -29,5 +22,20 @@ repo = 'ryanoasis/vim-devicons'
 repo = 'junegunn/fzf.vim'
 
 [[plugins]]
+repo = 'vim-airline/vim-airline'
+
+# Color Theme
+[[plugins]]
+repo = 'arcticicestudio/nord-vim'
+hook_add = '''
+    colorscheme nord
+    syntax on
+'''
+
+# Dev unitilities
+[[plugins]]
 repo = 'neoclide/coc.nvim'
 rev = 'release'
+
+[[plugins]]
+repo = 'airblade/vim-gitgutter'

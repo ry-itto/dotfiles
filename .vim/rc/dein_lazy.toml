@@ -20,3 +20,6 @@ on_ft = ['dart']
 [[plugins]]
 repo = 'thosakwe/vim-flutter'
 on_ft = ['dart']
+hook_post_source = '''
+call FlutterMenu()
+'''

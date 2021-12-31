@@ -18,6 +18,7 @@ show_header() {
 link_dotfiles() {
     # ignore files that should not link to $HOME
     dotfile_ignore='''
+    .config
     .git
     .gitignore
     .ruby-version
@@ -31,6 +32,10 @@ link_dotfiles() {
         echo "link $(pwd)/$dotfile to $HOME/$dotfile"
         ln -fns $(pwd)/$dotfile $HOME/$dotfile
     done
+}
+
+copy_config() {
+	cp -r .config/* $HOME/.config
 }
 
 install_deps() {
@@ -52,6 +57,7 @@ setting() {
 main() {
     show_header
     link_dotfiles
+    copy_config
     install_deps
     setting
     ruby_bundle
