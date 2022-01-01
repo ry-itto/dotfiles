@@ -7,6 +7,7 @@ repo = 'rust-lang/rust.vim'
 on_ft = ['rust']
 hook_source = '''
     let g:syntastic_rust_checkers = ['cargo', 'rustc']
+    let g:rustfmt_autosave = 1
 '''
 
 [[plugins]]

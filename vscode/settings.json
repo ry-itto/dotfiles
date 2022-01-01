@@ -14,6 +14,6 @@
     "diffEditor.ignoreTrimWhitespace": false,
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
-    "workbench.colorTheme": "Blink (rainglow)",
+    "workbench.colorTheme": "Nord",
     "workbench.iconTheme": "vscode-icons"
 }
