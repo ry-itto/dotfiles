@@ -59,3 +59,8 @@ export ZPLUG_HOME=$HOME/.zplug
 # zsh bin
 export PATH=$PATH:$HOME/.zsh/bin
 
+# Pub
+export PATH="$PATH":"$HOME/.pub-cache/bin"
+
+# fzf
+export FZF_DEFAULT_COMMAND='ag -g ""'

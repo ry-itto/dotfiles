@@ -31,8 +31,8 @@
 
 | Key          | Action              | Description           |
 | ------------ | ------------------- | --------------------- |
-| \<leader\>fa | :FlutterRun         | Flutter run           |
-| \<leader\>fq | :FlutterQuit        | Flutter quit          |
-| \<leader\>fr | :FlutterHotReload   | Flutter HotReload     |
-| \<leader\>fR | :FlutterHotRestart  | Flutter HotRestart    |
+| \<leader\>fa | :CocCommand flutter.run         | Flutter run           |
+| \<leader\>fq | :CocCommand flutter.dev.quit        | Flutter quit          |
+| \<leader\>fr | :CocCommand flutter.dev.hotReload   | Flutter HotReload     |
+| \<leader\>fR | :CocCommand flutter.dev.hotRestart  | Flutter HotRestart    |
 | \<leader\>fD | :FlutterVisualDebug | Flutter Virtual Debug |

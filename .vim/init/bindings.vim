@@ -8,10 +8,9 @@ nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gb <C-o>
 
 "Flutter"
-nnoremap <leader>fa :FlutterRun<cr>
-nnoremap <leader>fq :FlutterQuit<cr>
-nnoremap <leader>fr :FlutterHotReload<cr>
-nnoremap <leader>fR :FlutterHotRestart<cr>
-nnoremap <leader>fD :FlutterVisualDebug<cr>
+nnoremap <leader>fa :CocCommand flutter.run<cr>
+nnoremap <leader>fq :CocCommand flutter.dev.quit<cr>
+nnoremap <leader>fr :CocCommand flutter.dev.hotReload<cr>
+nnoremap <leader>fR :CocCommand flutter.dev.hotRestart<cr>
 xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)

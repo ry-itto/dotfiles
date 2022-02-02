@@ -1,5 +1,10 @@
 {
     "coc.preferences.formatOnSaveFiletypes" : [
-        "dart"
-    ]
+        "dart",
+        "rust"
+    ],
+    "flutter.openDevLogSplitCommand" : "botright 10split",
+    "flutter.autoOpenDevLog" : true,
+    "flutter.autoHideDevLog" : true,
+    "dart.lineLength" : 100
 }
