@@ -1,7 +1,7 @@
 [commit]
     template=~/.commit_template
 [user]
-    email = 110ryoya@gmail.com
+    email = ry.itto.github@gmail.com
     name = ryoya ito
 [core]
     excludesfile = ~/.gitignore_global
