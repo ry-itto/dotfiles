@@ -1,4 +1,4 @@
-name: Test Bootstrap
+name: Test Init
 
 on: [push]
 
@@ -20,5 +20,5 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-
           ${{ runner.os }}-build-
           ${{ runner.os }}-
-    - name: Test bootstrap.sh
-      run: ./bootstrap.sh
+    - name: Test make all
+      run: make all
