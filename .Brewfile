@@ -20,7 +20,9 @@ brew 'ideviceinstaller'
 brew 'ios-deploy'
 
 # プログラミング言語
+tap 'dart-lang/dart'
 brew 'go'
+brew 'dart'
 
 # ツール
 brew 'ag'
