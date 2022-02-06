@@ -31,7 +31,7 @@ LDFLAGS="-L$(brew --prefix readline)/lib -L$(brew --prefix openssl)/lib"
 PYTHON_CONFIGURE_OPTS=--enable-unicode=ucs2
 
 # flutter sdk
-export PATH=$PATH:$HOME/Applications/flutter/bin
+export PATH=$PATH:$HOME/fvm/default/bin
 
 # mysql path
 export PATH=$PATH:/usr/local/mysql/bin
