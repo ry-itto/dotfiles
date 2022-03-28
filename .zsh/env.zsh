@@ -1,3 +1,5 @@
+#! /bin/zsh
+
 # 補完
 autoload -U compinit
 compinit
@@ -58,7 +60,9 @@ export PATH="$PATH":"$HOME/.pub-cache/bin"
 export FZF_DEFAULT_COMMAND='ag -g ""'
 
 # brew
-eval $(/opt/homebrew/bin/brew shellenv)
+if [ `uname -m` = "arm64" ]; then
+    eval $(/opt/homebrew/bin/brew shellenv)
+fi
 
 # Visual Studio Code (code)
 export PATH="$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"
