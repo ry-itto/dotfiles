@@ -23,6 +23,12 @@ export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46
 export EDITOR=vi
 export PAGER='less'
 
+# brew
+if [ `uname -m` = "arm64" ]; then
+    export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+    eval $(/opt/homebrew/bin/brew shellenv)
+fi
+
 # GO env
 GOPATH="$HOME/go"
 export PATH=$PATH:$GOPATH/bin
@@ -58,11 +64,6 @@ export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 # fzf
 export FZF_DEFAULT_COMMAND='ag -g ""'
-
-# brew
-if [ `uname -m` = "arm64" ]; then
-    eval $(/opt/homebrew/bin/brew shellenv)
-fi
 
 # Visual Studio Code (code)
 export PATH="$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"

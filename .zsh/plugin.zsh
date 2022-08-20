@@ -16,9 +16,6 @@ zplug "b4b4r07/emoji-cli"
 ## Command 補完
 zplug "zsh-users/zsh-autosuggestions"
 
-## prompt
-zplug "denysdovhan/spaceship-prompt", use:spaceship.zsh, from:github, as:theme
-
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
     if read -q; then
