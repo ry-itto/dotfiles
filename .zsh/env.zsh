@@ -69,12 +69,8 @@ export FZF_DEFAULT_COMMAND='ag -g ""'
 export PATH="$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"
 
 # Spaceship
-SPACESHIP_CHAR_SYMBOL='> '
-SPACESHIP_DIR_COLOR=110
-SPACESHIP_DIR_TRUNC=0
-SPACESHIP_GIT_PREFIX=''
-SPACESHIP_GIT_BRANCH_COLOR=green
-SPACESHIP_GIT_STATUS_SHOW=false
+eval "$(starship init zsh)"
+export STARSHIP_CONFIG=~/example/non/default/path/starship.toml
 
 # 履歴の設定
 HISTFILE="$HOME/.zsh_history"
