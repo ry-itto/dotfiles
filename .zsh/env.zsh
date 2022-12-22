@@ -68,9 +68,9 @@ export FZF_DEFAULT_COMMAND='ag -g ""'
 # Visual Studio Code (code)
 export PATH="$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"
 
-# Spaceship
+# Starship
 eval "$(starship init zsh)"
-export STARSHIP_CONFIG=~/example/non/default/path/starship.toml
+export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 
 # 履歴の設定
 HISTFILE="$HOME/.zsh_history"
