@@ -40,6 +40,7 @@ PYTHON_CONFIGURE_OPTS=--enable-unicode=ucs2
 
 # flutter sdk
 export PATH=$PATH:$HOME/fvm/default/bin
+export FLUTTER_ROOT=$HOME/fvm/default/bin
 
 # mysql path
 export PATH=$PATH:/usr/local/mysql/bin
@@ -71,6 +72,18 @@ export PATH="$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app
 # Starship
 eval "$(starship init zsh)"
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
+
+# brew
+if [ `uname -m` = "arm64" ]; then
+    eval $(/opt/homebrew/bin/brew shellenv)
+    export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+fi
+
+# Visual Studio Code (code)
+export PATH="$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"
+
+# Android platform tools
+export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 
 # 履歴の設定
 HISTFILE="$HOME/.zsh_history"

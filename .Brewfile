@@ -38,6 +38,7 @@ brew 'emojify'
 brew 'nvim'
 brew 'tmux'
 brew 'starship'
+brew 'n'
 
 # gPRC
 brew 'protobuf'
