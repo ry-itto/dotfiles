@@ -111,5 +111,9 @@ setopt no_flow_control
 eval "$(rbenv init -)"
 eval "$(pyenv init -)"
 
+# asdf
+. "$HOME/.asdf/asdf.sh"
+fpath=(${ASDF_DIR}/completions $fpath)
+
 # emacs風キーバインドの復活
 bindkey -e
