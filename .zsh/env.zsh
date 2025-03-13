@@ -38,10 +38,6 @@ CFLAGS="-I$(brew --prefix readline)/include -I$(brew --prefix openssl)/include -
 LDFLAGS="-L$(brew --prefix readline)/lib -L$(brew --prefix openssl)/lib"
 PYTHON_CONFIGURE_OPTS=--enable-unicode=ucs2
 
-# flutter sdk
-export PATH=$PATH:$HOME/fvm/default/bin
-export FLUTTER_ROOT=$HOME/fvm/default/bin
-
 # mysql path
 export PATH=$PATH:/usr/local/mysql/bin
 
@@ -68,6 +64,9 @@ export FZF_DEFAULT_COMMAND='ag -g ""'
 
 # Visual Studio Code (code)
 export PATH="$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"
+
+# nest
+export PATH="$PATH:$HOME/.nest/bin"
 
 # Starship
 eval "$(starship init zsh)"
@@ -115,5 +114,11 @@ eval "$(pyenv init -)"
 . "$HOME/.asdf/asdf.sh"
 fpath=(${ASDF_DIR}/completions $fpath)
 
+# flutter sdk
+export FLUTTER_ROOT="$(asdf where flutter)"
+
 # emacs風キーバインドの復活
 bindkey -e
+
+# Android environment variables
+export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk

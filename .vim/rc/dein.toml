@@ -43,8 +43,7 @@ hook_add = '''
 
 # Dev unitilities
 [[plugins]]
-repo = 'neoclide/coc.nvim'
-rev = 'release'
+repo = 'airblade/vim-gitgutter'
 
 [[plugins]]
-repo = 'airblade/vim-gitgutter'
+repo = 'github/copilot.vim'
