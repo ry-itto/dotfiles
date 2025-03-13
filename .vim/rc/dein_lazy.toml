@@ -16,3 +16,24 @@ on_ft = ['toml']
 [[plugins]]
 repo = 'dart-lang/dart-vim-plugin'
 on_ft = ['dart']
+
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+on_ft = ['pkl']
+
+[[plugins]]
+repo = 'apple/pkl-neovim'
+on_ft = ['pkl']
+
+# Flutter
+[[plugins]]
+repo = 'akinsho/flutter-tools.nvim'
+on_ft = ['dart']
+depends = ['plenary.nvim', 'dressing.nvim']
+
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+
+[[plugins]]
+repo = 'stevearc/dressing.nvim'
+
