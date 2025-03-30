@@ -1,17 +1,9 @@
 # zsh関係
 brew 'zsh'
 
-# env系
-brew 'rbenv'
-brew 'pyenv'
-brew 'nodebrew'
-
 # iOS
-tap 'robotsandpencils/made'
-brew 'carthage'
 brew "xcodegen"
 brew 'mint'
-brew 'robotsandpencils/made/xcodes'
 
 # Flutter
 brew 'usbmuxd'
@@ -51,3 +43,4 @@ cask 'clipy'
 cask 'karabiner-elements'
 cask 'raycast'
 cask 'font-hack-nerd-font'
+cask 'warp'
