@@ -5,18 +5,33 @@ DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 DEPS_INSTALLERS := $(wildcard installers/??*)
 SETTINGS_INSTALLERS := $(wildcard settings/**/install.sh)
 
+# 進捗表示用の変数
+STEP := 0
+TOTAL_STEPS := 4
+
+define print_step
+	@echo "\n============================================="
+	@echo "Step $(STEP)/$(TOTAL_STEPS): $1"
+	@echo "=============================================\n"
+	@$(eval STEP := $(shell echo $$(($(STEP) + 1))))
+endef
+
 all: install deps
+	@echo "\n✨ All tasks completed successfully!\n"
 
 list:
 	@$(foreach val, $(DOTFILES), /bin/ls -dF $(val);)
 
 install: 
-	@echo 'Link dotfiles to home directory...'
-	@$(foreach val, $(DOTFILES), ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
-	@echo 'Create $(HOME)/.config and copy .config settings to home directory...'
+	$(call print_step,Installing dotfiles)
+	@echo 'Linking dotfiles to home directory...'
+	@$(foreach val, $(DOTFILES), echo "  Linking $(val)..." && ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
+	@echo 'Creating $(HOME)/.config and copying settings...'
 	@mkdir -p $(HOME)/.config && cp -r .config/* $(HOME)/.config
-	@echo 'Install setting'
-	$(foreach val, $(SETTINGS_INSTALLERS), /bin/zsh $(val);)
+	@echo 'Installing settings...'
+	$(foreach val, $(SETTINGS_INSTALLERS), echo "  Installing $(val)..." && /bin/zsh $(val);)
 
 deps:	
-	$(foreach val, $(DEPS_INSTALLERS), /bin/zsh $(val);)
+	$(call print_step,Installing dependencies)
+	@echo 'Running dependency installers...'
+	$(foreach val, $(DEPS_INSTALLERS), echo "  Running $(val)..." && /bin/zsh $(val);)
