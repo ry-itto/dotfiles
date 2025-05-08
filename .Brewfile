@@ -31,9 +31,17 @@ brew 'nvim'
 brew 'tmux'
 brew 'starship'
 brew 'n'
+brew 'asdf'
 
 # gPRC
 brew 'protobuf'
+
+# ruby-build
+brew 'openssl@3'
+brew 'readline'
+brew 'libyaml'
+brew 'autoconf'
+brew 'gmp'
 
 # Cask
 cask 'clipy'
@@ -44,3 +52,4 @@ cask 'notion'
 cask 'notion-calendar'
 cask 'figma'
 cask 'discord'
+cask 'rectangle'

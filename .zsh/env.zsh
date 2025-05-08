@@ -107,11 +107,10 @@ setopt pushd_ignore_dups
 setopt no_flow_control
 
 # env系init
-eval "$(rbenv init -)"
-eval "$(pyenv init -)"
+source "/$HOME/.sdkman/bin/sdkman-init.sh"
 
 # asdf
-. "$HOME/.asdf/asdf.sh"
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 fpath=(${ASDF_DIR}/completions $fpath)
 
 # flutter sdk
@@ -122,3 +121,5 @@ bindkey -e
 
 # Android environment variables
 export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
+
+export N_PREFIX=$HOME/.n
