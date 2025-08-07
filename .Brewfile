@@ -1,9 +1,10 @@
 # zsh関係
 brew 'zsh'
+brew 'zplug'
 
 # iOS
 brew "xcodegen"
-brew 'mint'
+brew "xcbeautify"
 
 # Flutter
 brew 'usbmuxd'
@@ -11,10 +12,8 @@ brew "libimobiledevice", args: ["HEAD"]
 brew 'ideviceinstaller'
 brew 'ios-deploy'
 
-# プログラミング言語
-tap 'dart-lang/dart'
-brew 'go'
-brew 'dart'
+# MCP
+brew 'uv'
 
 # ツール
 brew 'ag'
@@ -30,8 +29,8 @@ brew 'emojify'
 brew 'nvim'
 brew 'tmux'
 brew 'starship'
-brew 'n'
-brew 'asdf'
+brew 'mise'
+brew 'act'
 
 # gPRC
 brew 'protobuf'

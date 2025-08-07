@@ -109,12 +109,12 @@ setopt no_flow_control
 # env系init
 source "/$HOME/.sdkman/bin/sdkman-init.sh"
 
-# asdf
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-fpath=(${ASDF_DIR}/completions $fpath)
+# mise
+eval "$(~/.local/bin/mise activate zsh)"
+export PATH="$HOME/.local/bin:$PATH"
 
 # flutter sdk
-export FLUTTER_ROOT="$(asdf where flutter)"
+export FLUTTER_ROOT="$(mise where flutter 2>/dev/null || echo '')"
 export PATH="$PATH:$HOME/fvm/default/bin"
 
 # emacs風キーバインドの復活

@@ -80,7 +80,7 @@ lua << EOF
 			open_cmd = "30vnew",
 			auto_open = false
 		},
-                flutter_lookup_cmd = "asdf where flutter",
+                flutter_lookup_cmd = "mise where flutter",
 		lsp = {
 			on_attach = function(client, bufnr)
 				vim.cmd [[hi FlutterWidgetGuides ctermfg=237 guifg=#33374c]]
