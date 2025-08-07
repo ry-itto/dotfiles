@@ -115,6 +115,7 @@ fpath=(${ASDF_DIR}/completions $fpath)
 
 # flutter sdk
 export FLUTTER_ROOT="$(asdf where flutter)"
+export PATH="$PATH:$HOME/fvm/default/bin"
 
 # emacs風キーバインドの復活
 bindkey -e
@@ -123,3 +124,7 @@ bindkey -e
 export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
 
 export N_PREFIX=$HOME/.n
+export PATH="$PATH:$N_PREFIX/bin"
+
+eval "$(wt shell-init)"
+export WT_WORKTREE_DIR=.worktree

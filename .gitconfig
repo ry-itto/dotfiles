@@ -4,7 +4,6 @@
     email = 30540303+ry-itto@users.noreply.github.com
     name = ryoya ito
 [core]
-    excludesfile = ~/.gitignore_global
 	editor = nvim
 [filter "lfs"]
 	clean = git-lfs clean -- %f
