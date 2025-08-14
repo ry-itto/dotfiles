@@ -128,3 +128,5 @@ export PATH="$PATH:$N_PREFIX/bin"
 
 eval "$(wt shell-init)"
 export WT_WORKTREE_DIR=.worktree
+
+eval "$(mise activate zsh)"
