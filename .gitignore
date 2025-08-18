@@ -7,8 +7,9 @@
 # Worktree directories
 .worktree/
 
-# Claude AI
+# Claude AI (local settings only)
 .claude/settings.local.json
+.claude/hooks/
 
 # Firebase
 firebase-debug.log
