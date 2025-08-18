@@ -35,3 +35,14 @@ deps:
 	$(call print_step,Installing dependencies)
 	@echo 'Running dependency installers...'
 	$(foreach val, $(DEPS_INSTALLERS), echo "  Running $(val)..." && /bin/zsh $(val);)
+
+test:
+	@echo 'Running tests with Bats...'
+	@if command -v bats >/dev/null 2>&1; then \
+		bats tests/*.bats; \
+	else \
+		echo "Bats is not installed. Install with: brew install bats-core"; \
+		exit 1; \
+	fi
+
+.PHONY: all list install deps test

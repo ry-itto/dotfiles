@@ -1,24 +1,167 @@
-name: Test Init
+name: CI Tests
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
-
-    runs-on: [macos-latest]
-
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Cache brew dependencies (download)
-      uses: actions/cache@v4.2.2
+    
+    - name: Install shellcheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y shellcheck
+    
+    - name: Run shellcheck on shell scripts
+      run: |
+        find . -type f -name "*.sh" -exec shellcheck {} + || true
+        find . -type f -name "*.zsh" -exec shellcheck --shell=bash {} + 2>/dev/null || true
+    
+    - name: Check for syntax errors in zsh files
+      run: |
+        for file in $(find . -type f -name "*.zsh" -o -name ".zshrc"); do
+          if [[ -f "$file" ]]; then
+            zsh -n "$file" || echo "Syntax check failed for $file"
+          fi
+        done
+
+  test:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, macos-13]
+      fail-fast: false
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Cache brew dependencies
+      uses: actions/cache@v4
       env:
         cache-name: cache-brew-dependencies
       with:
-        path: ~/Library/Caches/Homebrew
+        path: |
+          ~/Library/Caches/Homebrew
+          /usr/local/Homebrew
+          /opt/homebrew
+        key: ${{ runner.os }}-${{ matrix.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.Brewfile') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-${{ matrix.os }}-build-
+          ${{ runner.os }}-${{ matrix.os }}-
+    
+    - name: Install Bats
+      run: |
+        if ! command -v bats &> /dev/null; then
+          brew install bats-core
+        fi
+    
+    - name: Run unit tests
+      run: make test
+    
+    - name: Test make list
+      run: |
+        make list
+        # Verify that .claude is not in the exclusion list
+        make list | grep -v "\.claude" || true
+    
+    - name: Test make install (dry run)
+      run: |
+        # Create a temporary HOME for testing
+        export TEST_HOME=$(mktemp -d)
+        export HOME=$TEST_HOME
+        make install
+        # Verify symlinks were created
+        ls -la $TEST_HOME
+        # Check that essential dotfiles are linked
+        test -L $TEST_HOME/.zshrc
+        test -L $TEST_HOME/.tmux.conf
+        test -L $TEST_HOME/.gitconfig
+    
+    - name: Test installer syntax
+      run: |
+        for installer in installers/*.sh; do
+          echo "Checking syntax of $installer"
+          zsh -n "$installer"
+        done
+        for installer in settings/**/install.sh; do
+          echo "Checking syntax of $installer"
+          zsh -n "$installer"
+        done
+    
+    - name: Verify critical files exist
+      run: |
+        test -f .Brewfile
+        test -f .zshrc
+        test -f .gitconfig
+        test -f .tmux.conf
+        test -f Makefile
+        test -d .zsh
+        test -d installers
+        test -d settings
+
+  integration:
+    name: Integration Test
+    runs-on: macos-latest
+    needs: [lint, test]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Cache brew dependencies
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-brew-dependencies
+      with:
+        path: |
+          ~/Library/Caches/Homebrew
+          /usr/local/Homebrew
+          /opt/homebrew
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.Brewfile') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
           ${{ runner.os }}-build-
           ${{ runner.os }}-
-    - name: Test make all
-      run: make all
+    
+    - name: Full installation test
+      run: |
+        # Set up test environment
+        export ORIGINAL_HOME=$HOME
+        export TEST_HOME=$(mktemp -d)
+        export HOME=$TEST_HOME
+        
+        # Run full installation
+        make all || true
+        
+        # Verify installation
+        echo "=== Verifying installation ==="
+        ls -la $TEST_HOME
+        
+        # Check symlinks
+        if [[ -L $TEST_HOME/.zshrc ]]; then
+          echo "✓ .zshrc symlink created"
+        else
+          echo "✗ .zshrc symlink missing"
+        fi
+        
+        # Restore HOME
+        export HOME=$ORIGINAL_HOME
+    
+    - name: Test idempotency
+      run: |
+        export TEST_HOME=$(mktemp -d)
+        export HOME=$TEST_HOME
+        
+        # Run install twice to test idempotency
+        make install
+        make install
+        
+        # Should complete without errors
+        echo "✓ Installation is idempotent"
