@@ -8,8 +8,14 @@
 .worktree/
 
 # Claude AI (local settings only)
+.claude/local/
 .claude/settings.local.json
 .claude/hooks/
+.claude/projects/
+.claude/scripts/
+.claude/shell-snapshots/
+.claude/statsig/
+.claude/todos/
 
 # Firebase
 firebase-debug.log
