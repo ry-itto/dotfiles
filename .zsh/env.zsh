@@ -110,8 +110,12 @@ setopt no_flow_control
 source "/$HOME/.sdkman/bin/sdkman-init.sh"
 
 # mise
-eval "$(~/.local/bin/mise activate zsh)"
 export PATH="$HOME/.local/bin:$PATH"
+eval "$(~/.local/bin/mise activate zsh)"
+
+# asdf (後方互換性のため残す)
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+fpath=(${ASDF_DIR}/completions $fpath)
 
 # flutter sdk
 export FLUTTER_ROOT="$(mise where flutter 2>/dev/null || echo '')"

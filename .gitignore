@@ -1,3 +1,15 @@
 .netrwhist
 .DS_Store
 
+# Local environment settings
+.zsh/env_local.zsh
+
+# Worktree directories
+.worktree/
+
+# Claude AI
+.claude/settings.local.json
+
+# Firebase
+firebase-debug.log
+
