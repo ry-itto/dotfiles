@@ -49,11 +49,10 @@ load test_helper
     local brew_script="${REPO_ROOT}/installers/brew.sh"
     
     # Check that the script contains Homebrew check
+    grep -q 'type "brew"' "${brew_script}" || \
     grep -q "which brew" "${brew_script}" || \
     grep -q "command -v brew" "${brew_script}" || \
-    grep -q "brew --version" "${brew_script}" || \
-    grep -q "/opt/homebrew/bin/brew" "${brew_script}" || \
-    grep -q "/usr/local/bin/brew" "${brew_script}"
+    grep -q "brew --version" "${brew_script}"
 }
 
 @test "installer scripts use consistent error handling" {

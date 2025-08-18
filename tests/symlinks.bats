@@ -12,7 +12,8 @@ load test_helper
     ! echo "${output}" | grep -q "\.DS_Store"
     ! echo "${output}" | grep -q "\.ruby-version"
     ! echo "${output}" | grep -q "\.config/"
-    ! echo "${output}" | grep -q "\.claude/"
+    # .claude should be included (not excluded)
+    echo "${output}" | grep -q "\.claude/"
 }
 
 @test "dotfiles list includes expected directories" {
