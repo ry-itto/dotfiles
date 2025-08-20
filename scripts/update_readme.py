@@ -3,6 +3,7 @@
 import json
 import sys
 import subprocess
+import platform
 from datetime import datetime
 from pathlib import Path
 
@@ -15,17 +16,23 @@ def run_command(cmd):
         print(f"Error running command '{cmd}': {e}", file=sys.stderr)
         return None
 
-def collect_environment():
-    """Collect environment information"""
-    script_path = Path(__file__).parent / "collect_environment.sh"
-    output = run_command(f"zsh {script_path}")
-    if output:
-        try:
-            return json.loads(output)
-        except json.JSONDecodeError as e:
-            print(f"Error parsing JSON: {e}", file=sys.stderr)
-            print(f"Output was: {output}", file=sys.stderr)
-    return None
+def get_system_info():
+    """Get basic system information"""
+    try:
+        # Get macOS version using sw_vers command
+        os_name = run_command('sw_vers -productName') or platform.system()
+        os_version = run_command('sw_vers -productVersion') or platform.release()
+    except:
+        # Fallback to platform module
+        os_name = platform.system()
+        os_version = platform.release()
+    
+    return {
+        'os': os_name,
+        'version': os_version,
+        'arch': platform.machine(),
+        'updated_at': datetime.utcnow().isoformat() + 'Z'
+    }
 
 def parse_brewfile():
     """Parse .Brewfile to get intended packages"""
@@ -37,50 +44,6 @@ def parse_brewfile():
         except json.JSONDecodeError as e:
             print(f"Error parsing Brewfile JSON: {e}", file=sys.stderr)
     return {"formulae": {}, "casks": {}}
-
-def format_languages_table(languages):
-    """Format programming languages as a markdown table"""
-    lines = ["| Language | Version |", "|----------|---------|"]
-    
-    lang_display = {
-        "node": "Node.js",
-        "npm": "npm",
-        "python": "Python",
-        "ruby": "Ruby",
-        "go": "Go",
-        "rust": "Rust",
-        "dart": "Dart",
-        "flutter": "Flutter"
-    }
-    
-    for key, version in languages.items():
-        if version != "not installed":
-            display_name = lang_display.get(key, key.title())
-            lines.append(f"| {display_name} | `{version}` |")
-    
-    return "\n".join(lines)
-
-def format_tools_table(tools):
-    """Format development tools as a markdown table"""
-    lines = ["| Tool | Version |", "|------|---------|"]
-    
-    tool_display = {
-        "git": "Git",
-        "docker": "Docker",
-        "tmux": "tmux",
-        "neovim": "Neovim",
-        "starship": "Starship",
-        "gh": "GitHub CLI",
-        "mise": "mise",
-        "fzf": "fzf"
-    }
-    
-    for key, version in tools.items():
-        if version != "not installed":
-            display_name = tool_display.get(key, key.title())
-            lines.append(f"| {display_name} | `{version}` |")
-    
-    return "\n".join(lines)
 
 def format_brewfile_packages(brewfile_data, package_type="formulae"):
     """Format packages from Brewfile with categories and descriptions"""
@@ -120,7 +83,7 @@ def format_brewfile_packages(brewfile_data, package_type="formulae"):
     
     return "\n".join(lines)
 
-def update_readme(env_data, brewfile_data):
+def update_readme(system_info, brewfile_data):
     """Update README.md with environment information"""
     template_path = Path(__file__).parent.parent / "README.template.md"
     readme_path = Path(__file__).parent.parent / "README.md"
@@ -139,10 +102,10 @@ def update_readme(env_data, brewfile_data):
     
     # Prepare replacement values
     replacements = {
-        "{{OS_NAME}}": env_data['system']['os'],
-        "{{OS_VERSION}}": env_data['system']['version'],
-        "{{ARCH}}": env_data['system']['arch'],
-        "{{UPDATED_AT}}": datetime.fromisoformat(env_data['updated_at'].replace('Z', '+00:00')).strftime('%Y-%m-%d %H:%M UTC'),
+        "{{OS_NAME}}": system_info['os'],
+        "{{OS_VERSION}}": system_info['version'],
+        "{{ARCH}}": system_info['arch'],
+        "{{UPDATED_AT}}": datetime.fromisoformat(system_info['updated_at'].replace('Z', '+00:00')).strftime('%Y-%m-%d %H:%M UTC'),
         "{{FORMULAE_COUNT}}": str(formulae_count),
         "{{FORMULAE_LIST}}": format_brewfile_packages(brewfile_data, "formulae"),
         "{{CASKS_COUNT}}": str(casks_count),
@@ -158,7 +121,7 @@ def update_readme(env_data, brewfile_data):
         f.write(content)
     
     print(f"✅ README.md updated successfully")
-    print(f"   - Environment: {env_data['system']['os']} {env_data['system']['version']} ({env_data['system']['arch']})")
+    print(f"   - Environment: {system_info['os']} {system_info['version']} ({system_info['arch']})")
     print(f"   - {formulae_count} Homebrew formulae defined in .Brewfile")
     print(f"   - {casks_count} Homebrew casks defined in .Brewfile")
     
@@ -166,18 +129,14 @@ def update_readme(env_data, brewfile_data):
 
 def main():
     """Main function"""
-    print("📊 Collecting environment information...")
-    env_data = collect_environment()
-    
-    if not env_data:
-        print("❌ Failed to collect environment information", file=sys.stderr)
-        sys.exit(1)
+    print("📊 Getting system information...")
+    system_info = get_system_info()
     
     print("📦 Parsing .Brewfile...")
     brewfile_data = parse_brewfile()
     
     print("📝 Updating README.md...")
-    if update_readme(env_data, brewfile_data):
+    if update_readme(system_info, brewfile_data):
         sys.exit(0)
     else:
         sys.exit(1)
