@@ -22,7 +22,7 @@ make all
 <!-- START ENVIRONMENT INFO -->
 ## 📦 Package Configuration
 
-> **Tested on**: macOS 15.5 (arm64) - Last updated: 2025-08-20 08:41 UTC
+> **Tested on**: macOS 15.5 (arm64) - Last updated: 2025-08-22 04:38 UTC
 
 The following packages are defined in `.Brewfile` for installation:
 
