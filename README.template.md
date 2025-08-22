@@ -22,85 +22,21 @@ make all
 <!-- START ENVIRONMENT INFO -->
 ## 📦 Package Configuration
 
-> **Tested on**: macOS 15.5 (arm64) - Last updated: 2025-08-20 08:41 UTC
+> **Tested on**: {{OS_NAME}} {{OS_VERSION}} ({{ARCH}}) - Last updated: {{UPDATED_AT}}
 
 The following packages are defined in `.Brewfile` for installation:
 
 <details>
-<summary>🛠️ Homebrew Formulae (30 packages)</summary>
+<summary>🛠️ Homebrew Formulae ({{FORMULAE_COUNT}} packages)</summary>
 
-
-**zsh関係**
-
-- `zsh` - Z shell - Modern shell with advanced features
-- `zplug` - Zsh plugin manager
-
-**iOS**
-
-- `xcodegen` - Generate Xcode projects from spec files
-- `xcbeautify` - Xcode build output formatter
-
-**Flutter**
-
-- `usbmuxd` - USB multiplexing daemon for iOS devices
-- `libimobiledevice` (latest development version) - iOS device communication library
-- `ideviceinstaller` - Manage iOS apps from command line
-- `ios-deploy` - Install and debug iOS apps from command line
-
-**MCP**
-
-- `uv` - Fast Python package installer and resolver
-
-**ツール**
-
-- `ag` - The Silver Searcher - Fast code searching
-- `gh` - GitHub CLI
-- `ghq` - Git repository organizer
-- `fzf` - Fuzzy finder for command line
-- `jq` - JSON processor
-- `tig` - Text-mode interface for git
-- `tree` - Display directory tree structure
-- `nkf` - Network Kanji Filter - Character encoding converter
-- `git` - Distributed version control system
-- `emojify` - Emoji on the command line
-- `nvim` - Neovim - Hyperextensible Vim-based text editor
-- `tmux` - Terminal multiplexer
-- `starship` - Cross-shell prompt
-- `mise` - Development environment manager (formerly rtx)
-- `act` - Run GitHub Actions locally
-
-**gPRC**
-
-- `protobuf` - Protocol Buffers - Google's data interchange format
-
-**ruby-build**
-
-- `openssl@3` - Cryptography and SSL/TLS toolkit
-- `readline` - GNU readline library
-- `libyaml` - YAML parser and emitter library
-- `autoconf` - Automatic configure script builder
-- `gmp` - GNU multiple precision arithmetic library
+{{FORMULAE_LIST}}
 
 </details>
 
 <details>
-<summary>🖥️ Homebrew Casks - GUI Applications (12 apps)</summary>
+<summary>🖥️ Homebrew Casks - GUI Applications ({{CASKS_COUNT}} apps)</summary>
 
-
-**Cask**
-
-- `clipy` - Clipboard manager
-- `raycast` - Productivity launcher
-- `font-hack-nerd-font` - Hack font with Nerd Font patches
-- `font-hackgen` - Japanese programming font
-- `font-hackgen-nerd` - HackGen with Nerd Font patches
-- `notion` - All-in-one workspace
-- `notion-calendar` - Calendar app by Notion
-- `figma` - Collaborative design tool
-- `discord` - Voice, video, and text chat
-- `rectangle` - Window management app
-- `hammerspoon` - Desktop automation tool
-- `wezterm` - GPU-accelerated terminal emulator
+{{CASKS_LIST}}
 
 </details>
 <!-- END ENVIRONMENT INFO -->
