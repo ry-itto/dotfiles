@@ -1,0 +1,9 @@
+[tools]
+# Flutter development
+flutter = "latest"
+
+# Rust development
+rust = "stable"
+
+# Vim/Neovim
+vim = "latest"

@@ -28,13 +28,13 @@ make list
 # Install Homebrew dependencies
 /bin/zsh installers/brew.sh
 
-# Install other tools (run as needed)
+# Install development tools via mise
 /bin/zsh installers/mise.sh
-/bin/zsh installers/flutter.sh
-/bin/zsh installers/rust.sh
-/bin/zsh installers/vim.sh
-/bin/zsh installers/xcode.sh
-/bin/zsh installers/zplug.sh
+
+# Install other tools (run as needed)
+/bin/zsh installers/dein.sh    # Vim plugin manager
+/bin/zsh installers/xcode.sh    # Xcode settings
+/bin/zsh installers/zplug.sh    # Zsh plugin manager
 ```
 
 ## Architecture
@@ -62,6 +62,10 @@ make list
 
 4. **Installers** (`installers/`):
    - Shell scripts for installing various development tools
+   - `mise.sh`: Installs Flutter, Rust, and Vim via mise
+   - `dein.sh`: Installs dein.vim plugin manager
+   - `xcode.sh`: Configures Xcode settings
+   - `zplug.sh`: Installs zplug shell plugin manager
    - Each script checks if tool exists before installation
    - Designed to be idempotent
 
@@ -73,10 +77,10 @@ make list
 
 The repository configures a comprehensive development environment for:
 - **iOS Development**: Xcode tools, XcodeGen, Mint
-- **Flutter Development**: Dart, Flutter toolchain, iOS deployment tools
+- **Flutter Development**: Flutter (via mise), Dart, iOS deployment tools
 - **Web Development**: Node.js (via n), various JS tools
-- **General Development**: Git, GitHub CLI, tmux, neovim, starship prompt
-- **Language Support**: Go, Dart, Ruby (via mise), Rust
+- **General Development**: Git, GitHub CLI, tmux, neovim, starship prompt, Vim (via mise)
+- **Language Support**: Go, Dart, Ruby, Rust (via mise), Flutter (via mise)
 
 ## Key Design Principles
 
