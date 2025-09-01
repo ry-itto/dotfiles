@@ -22,7 +22,7 @@ make all
 <!-- START ENVIRONMENT INFO -->
 ## 📦 Package Configuration
 
-> **Tested on**: macOS 15.5 (arm64) - Last updated: 2025-08-22 04:38 UTC
+> **Tested on**: macOS 15.5 (arm64) - Last updated: 2025-09-01 08:57 UTC
 
 The following packages are defined in `.Brewfile` for installation:
 
@@ -66,7 +66,7 @@ The following packages are defined in `.Brewfile` for installation:
 - `nvim` - Neovim - Hyperextensible Vim-based text editor
 - `tmux` - Terminal multiplexer
 - `starship` - Cross-shell prompt
-- `mise` - Development environment manager (manages Flutter, Rust, Vim, etc.)
+- `mise` - Development environment manager (formerly rtx)
 - `act` - Run GitHub Actions locally
 
 **gPRC**
