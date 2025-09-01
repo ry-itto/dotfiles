@@ -66,7 +66,7 @@ The following packages are defined in `.Brewfile` for installation:
 - `nvim` - Neovim - Hyperextensible Vim-based text editor
 - `tmux` - Terminal multiplexer
 - `starship` - Cross-shell prompt
-- `mise` - Development environment manager (formerly rtx)
+- `mise` - Development environment manager (manages Flutter, Rust, Vim, etc.)
 - `act` - Run GitHub Actions locally
 
 **gPRC**
@@ -138,10 +138,8 @@ You can also run individual installer scripts as needed:
 /bin/zsh installers/brew.sh
 
 # Install development tools
-/bin/zsh installers/mise.sh    # Version management
-/bin/zsh installers/flutter.sh # Flutter SDK
-/bin/zsh installers/rust.sh    # Rust toolchain
-/bin/zsh installers/vim.sh     # Vim plugins
+/bin/zsh installers/mise.sh    # Version management + Flutter/Rust/Vim
+/bin/zsh installers/dein.sh    # Vim plugin manager
 /bin/zsh installers/xcode.sh   # Xcode tools
 /bin/zsh installers/zplug.sh   # Zsh plugin manager
 ```
