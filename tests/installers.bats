@@ -5,9 +5,8 @@ load test_helper
 @test "all installer scripts exist" {
     local installers=(
         "brew.sh"
-        "flutter.sh"
-        "rust.sh"
-        "vim.sh"
+        "mise.sh"
+        "dein.sh"
         "xcode.sh"
         "zplug.sh"
     )
