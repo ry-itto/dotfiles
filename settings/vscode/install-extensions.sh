@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 if ! type 'code' > /dev/null; then
     echo 'Please install vscode and activate `code` command.'
     exit 1

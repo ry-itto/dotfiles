@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 if ! type "xcodebuild" > /dev/null ; then
 	xcodes install --latest
 fi

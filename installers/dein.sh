@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 # Install dein
 INSTALLATION_DIR=$HOME/.cache/dein
 

@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 if ! type "brew" > /dev/null; then
 	echo '`brew` not found. Install Homebrew'
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"

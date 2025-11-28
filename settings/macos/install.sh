@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 # NSGlobalDomain
 # 全ての拡張子のファイルを表示
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
