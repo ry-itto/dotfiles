@@ -66,8 +66,8 @@ The repository **is** the chezmoi source directory. chezmoi reads filename prefi
 **Managed dotfiles** (chezmoi targets):
 - `dot_zshrc` — entrypoint that sources modules under `~/.zsh/`
 - `dot_zsh/` — modular Zsh config: `alias.zsh`, `env.zsh`, `style.zsh`, `plugin.zsh`, `functions/`, `bin/executable_reload`
-- `dot_tmux.conf`, `dot_gitconfig`, `dot_Brewfile`, `dot_commit_template`
-- `dot_vim/`, `dot_wezterm.lua`, `dot_hammerspoon/`, `dot_claude/`
+- `dot_gitconfig`, `dot_Brewfile`, `dot_commit_template`
+- `dot_vim/`, `dot_hammerspoon/`, `dot_claude/`
 - `dot_config/nvim/`, `dot_config/starship.toml`, `dot_config/mise/config.toml`
 - `private_Library/private_Application Support/Code/User/settings.json` — VSCode user settings
 
@@ -83,9 +83,8 @@ The repository **is** the chezmoi source directory. chezmoi reads filename prefi
 - `.chezmoiignore` — paths chezmoi should skip during apply (README, scripts/, CI files, destination-side local files)
 
 **Repository support files** (excluded from `chezmoi apply` via `.chezmoiignore`):
-- `scripts/parse_brewfile.py`, `scripts/update_readme.py` — README generation in CI
-- `.github/workflows/ci.yml` — lint, chezmoi-verify, README auto-update
-- `README.md`, `README.template.md`, `CLAUDE.md`, `LICENSE`
+- `.github/workflows/ci.yml` — lint, chezmoi-verify
+- `README.md`, `CLAUDE.md`, `LICENSE`
 
 ### Run Script Execution Order
 
@@ -107,7 +106,7 @@ All run scripts honor `CI=1` and exit early in CI to avoid expensive operations.
 - **iOS Development**: Xcode, XcodeGen, xcbeautify (Homebrew)
 - **Flutter / Rust / Node / Ruby**: managed by mise (`dot_config/mise/config.toml`)
 - **Web Development**: Node.js (via mise), npm/yarn ecosystem
-- **General**: Git, GitHub CLI, tmux, Neovim, Starship prompt
+- **General**: Git, GitHub CLI, Neovim, Starship prompt
 
 ## Key Design Principles
 
