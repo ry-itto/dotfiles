@@ -6,7 +6,7 @@ from pathlib import Path
 
 def parse_brewfile():
     """Parse .Brewfile and extract package information with categories"""
-    brewfile_path = Path(__file__).parent.parent / ".Brewfile"
+    brewfile_path = Path(__file__).parent.parent / "dot_Brewfile"
     
     if not brewfile_path.exists():
         return {"formulae": {}, "casks": {}}

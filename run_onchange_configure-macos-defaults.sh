@@ -1,18 +1,23 @@
+#!/bin/zsh
+set -eu
+
+[[ -n "${CI:-}" ]] && exit 0
+
 # NSGlobalDomain
-# 全ての拡張子のファイルを表示
+# Show all file extensions
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
-# キーのリピート速度
+# Key repeat speed
 defaults write NSGlobalDomain KeyRepeat -int 2
 
-# キーのリピートまでの速度
+# Initial key repeat delay
 defaults write NSGlobalDomain InitialKeyRepeat -int 25
 
-# Finderで隠しファイルを表示
+# Show hidden files in Finder
 defaults write com.apple.finder AppleShowAllFiles TRUE
 
-# キーの押し込み時連続入力をさせる
+# Disable press-and-hold for keys (allows key repeat)
 defaults write -g ApplePressAndHoldEnabled -bool false
 
-# Caps LockキーをControlキーとして使用
+# Map Caps Lock to Control
 defaults write com.apple.keyboard.modifiermapping.1452-640-0 -array-add '{ "HIDKeyboardModifierMappingSrc" = 2; "HIDKeyboardModifierMappingDst" = 4; }'

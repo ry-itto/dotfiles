@@ -1,0 +1,22 @@
+README.md
+README.template.md
+LICENSE
+CLAUDE.md
+.github
+.gitignore
+scripts
+
+# Destination side files chezmoi must not touch
+.claude/local
+.claude/settings.local.json
+.claude/hooks
+.claude/projects
+.claude/scripts
+.claude/shell-snapshots
+.claude/statsig
+.claude/todos
+.zsh/env_local.zsh
+.worktree
+firebase-debug.log
+.netrwhist
+.DS_Store

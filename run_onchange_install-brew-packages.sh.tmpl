@@ -1,12 +1,18 @@
+#!/bin/zsh
+set -eu
+
+[[ -n "${CI:-}" ]] && exit 0
+
 if ! type "brew" > /dev/null; then
 	echo '`brew` not found. Install Homebrew'
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
-brew bundle check --global
-if [ $? -ne 0 ]; then
+if brew bundle check --global; then
+	echo '`brew` dependencies are satisfied'
+else
 	echo 'Install `brew` dependencies...'
 	brew bundle --global -v
-else
-	echo '`brew` dependencies are satisfied :smile:' | emojify
 fi
+
+# brewfile hash: {{ include "dot_Brewfile" | sha256sum }}

@@ -1,30 +1,29 @@
 # dotfiles
 
-My personal dotfiles for macOS development environment setup. This repository contains configurations for various development tools and automated installation scripts.
+My personal dotfiles for macOS development environment, managed by [chezmoi](https://www.chezmoi.io/).
 
 ## 🚀 Quick Start
 
 ```bash
-# Clone the repository
-git clone https://github.com/ry-itto/dotfiles.git ~/ghq/github.com/ry-itto/dotfiles
-cd ~/ghq/github.com/ry-itto/dotfiles
+# Install chezmoi if you don't have it
+brew install chezmoi
 
-# Install everything (dotfiles + dependencies)
-make all
+# Initialize and apply this repository
+chezmoi init --apply ry-itto/dotfiles
 ```
 
 ## 📋 Requirements
 
-- macOS (tested on macOS 14+)
+- macOS (this configuration is macOS-only)
 - Command Line Tools for Xcode
 - Internet connection for downloading packages
 
 <!-- START ENVIRONMENT INFO -->
 ## 📦 Package Configuration
 
-> **Tested on**: macOS 15.5 (arm64) - Last updated: 2025-08-20 08:41 UTC
+> **Tested on**: macOS 26.2 (arm64) - Last updated: 2026-04-28 06:48 UTC
 
-The following packages are defined in `.Brewfile` for installation:
+The following packages are defined in `dot_Brewfile` (rendered to `~/.Brewfile`) for installation:
 
 <details>
 <summary>🛠️ Homebrew Formulae (30 packages)</summary>
@@ -107,162 +106,125 @@ The following packages are defined in `.Brewfile` for installation:
 
 ## 🛠 Installation
 
-### Full Installation (Recommended)
-
-Installs all dotfiles and dependencies:
-
 ```bash
-make all
+brew install chezmoi
+chezmoi init --apply ry-itto/dotfiles
 ```
 
-### Partial Installation
+`chezmoi init --apply` will:
 
-Install only dotfiles (symlinks and configs):
+1. Clone this repository into `~/.local/share/chezmoi`
+2. Render dotfiles into `$HOME` (e.g. `dot_zshrc` → `~/.zshrc`)
+3. Run `run_onchange_install-brew-packages.sh` to install Homebrew bundle from `~/.Brewfile`
+4. Run `run_onchange_configure-macos-defaults.sh` and `run_onchange_configure-xcode.sh` to apply system defaults
+5. Run `run_once_install-zplug.sh`, `run_once_install-dein.sh` to bootstrap shell/editor plugin managers
+6. Run `run_once_install-mise-tools.sh` to install language runtimes (flutter, rust, node, ruby) defined in `dot_config/mise/config.toml`
 
-```bash
-make install
-```
-
-Install only dependencies (Homebrew, tools, etc.):
-
-```bash
-make deps
-```
-
-### Manual Installation
-
-You can also run individual installer scripts as needed:
+## 🔄 Daily Operations
 
 ```bash
-# Install Homebrew and packages
-/bin/zsh installers/brew.sh
+# Pull latest changes from this repo and re-apply
+chezmoi update
 
-# Install development tools
-/bin/zsh installers/mise.sh    # Version management
-/bin/zsh installers/flutter.sh # Flutter SDK
-/bin/zsh installers/rust.sh    # Rust toolchain
-/bin/zsh installers/vim.sh     # Vim plugins
-/bin/zsh installers/xcode.sh   # Xcode tools
-/bin/zsh installers/zplug.sh   # Zsh plugin manager
+# Edit a managed file (opens source file in $EDITOR)
+chezmoi edit ~/.zshrc
+
+# See what would change before applying
+chezmoi diff
+
+# Add a new file from $HOME into management
+chezmoi add ~/.somefile
 ```
+
+> **Note:** After migrating to chezmoi, editing files in `$HOME` directly does **not** sync back to this repository. Use `chezmoi edit` or edit the source file under `~/.local/share/chezmoi`, then `chezmoi apply`.
 
 ## 📂 Directory Structure
 
 ```
 .
-├── .config/           # Application configs (copied to ~/.config/)
-│   ├── hammerspoon/   # Hammerspoon automation
-│   ├── karabiner/     # Karabiner-Elements key mappings
-│   ├── raycast/       # Raycast shortcuts
-│   ├── starship.toml  # Starship prompt config
-│   └── wezterm/       # WezTerm terminal config
-├── .zsh/              # Modular Zsh configuration
-│   ├── alias.zsh      # Command aliases
-│   ├── env.zsh        # Environment variables
-│   ├── plugin.zsh     # Zsh plugins
-│   └── style.zsh      # Shell appearance
-├── installers/        # Installation scripts
-├── scripts/           # Utility scripts
-│   ├── collect_environment.sh  # Collect system info
-│   └── update_readme.py        # Update README with env info
-├── settings/          # Platform-specific settings
-│   ├── macos/         # macOS system preferences
-│   ├── vscode/        # VSCode settings & extensions
-│   └── xcode/         # Xcode themes & templates
-├── .Brewfile          # Homebrew bundle definition
-├── .commit_template   # Git commit template
-├── .gitconfig         # Git configuration
-├── .tmux.conf         # Tmux configuration
-├── .zshrc             # Main shell configuration
-├── CLAUDE.md          # AI assistant instructions
-├── README.md          # This file (auto-generated from template)
-├── README.template.md # Template for README generation
-└── Makefile           # Installation orchestrator
+├── dot_zshrc                              # → ~/.zshrc
+├── dot_zsh/                               # → ~/.zsh/
+│   ├── alias.zsh
+│   ├── env.zsh
+│   ├── plugin.zsh
+│   ├── style.zsh
+│   ├── functions/
+│   └── bin/executable_reload              # → ~/.zsh/bin/reload (chmod +x)
+├── dot_tmux.conf
+├── dot_gitconfig
+├── dot_Brewfile
+├── dot_commit_template
+├── dot_vim/
+├── dot_wezterm.lua
+├── dot_hammerspoon/
+├── dot_claude/                            # → ~/.claude/
+├── dot_config/
+│   ├── nvim/
+│   ├── starship.toml
+│   └── mise/config.toml                   # mise tool definitions
+├── private_Library/
+│   └── private_Application Support/Code/User/settings.json   # → VSCode settings
+├── run_onchange_install-brew-packages.sh.tmpl
+├── run_onchange_configure-macos-defaults.sh
+├── run_onchange_configure-xcode.sh
+├── run_once_install-zplug.sh
+├── run_once_install-dein.sh
+├── run_once_install-mise-tools.sh
+├── .chezmoiignore                         # files to skip during apply
+├── scripts/                               # README generator (CI only)
+└── .github/workflows/ci.yml
 ```
 
 ## 🎯 What's Included
 
 ### Development Tools
 
-- **Package Managers**: Homebrew, mise (for version management)
+- **Package Managers**: Homebrew, mise
 - **Shell**: Zsh with zplug, Starship prompt
 - **Terminal**: WezTerm, tmux
 - **Editors**: Neovim, VSCode
-- **Version Control**: Git, GitHub CLI, Lazygit
+- **Version Control**: Git, GitHub CLI
 
-### Development Stacks
+### Language Runtimes (managed by mise)
 
-- **iOS Development**: Xcode, XcodeGen, Mint, SwiftLint, SwiftFormat
-- **Flutter Development**: Flutter SDK, Dart, FVM
-- **Web Development**: Node.js (via n), npm packages
-- **General**: Go, Rust, Ruby
+Defined in `dot_config/mise/config.toml`:
 
-### macOS Applications
+- Flutter
+- Rust
+- Node.js
+- Ruby
 
-- **Productivity**: Raycast, Hammerspoon, Karabiner-Elements
-- **Development**: Docker, Orbstack, TablePlus, Fork
-- **Communication**: Slack, Discord, Zoom
-- **Utilities**: 1Password, AppCleaner, The Unarchiver
+### Other Stacks
+
+- **iOS Development**: Xcode, XcodeGen, xcbeautify
+- **macOS Apps**: Raycast, Hammerspoon, Rectangle, Clipy
 
 ## ⚙️ Configuration
 
 ### Zsh
 
-The shell configuration is modular and organized in `.zsh/`:
+Modular configuration in `dot_zsh/`:
 
 - `alias.zsh`: Custom command aliases
 - `env.zsh`: Environment variables and PATH setup
-- `plugin.zsh`: Zsh plugin configuration
+- `plugin.zsh`: Zsh plugin configuration via zplug
 - `style.zsh`: Prompt and appearance settings
 
 ### Git
 
-Custom Git configuration includes:
-- Commit template for consistent commit messages
-- Useful aliases and shortcuts
-- GitHub CLI integration
+`dot_gitconfig` provides commit template, GitHub CLI helpers, and standard pull/credential settings.
 
-### Tmux
+### Tmux / Vim
 
-Pre-configured with:
-- Custom key bindings
-- Status bar configuration
-- Plugin management via TPM
-
-### Vim/Neovim
-
-Vim configuration includes:
-
-#### Coc Extensions
-
-Install extensions using:
-
-```vim
-:CocInstall {extension-name}
-```
-
-Included extensions:
-- coc-flutter - Flutter/Dart language support
+Pre-configured tmux key bindings and Vim setup with dein.vim plugin manager.
 
 ## 🔧 Customization
 
 1. **Fork this repository** to create your own version
-2. **Edit configuration files** to match your preferences:
-   - Modify `.Brewfile` to add/remove packages
-   - Update `.zsh/alias.zsh` for custom aliases
-   - Adjust `.gitconfig` with your user information
-3. **Add your own dotfiles** - they'll be automatically symlinked
-4. **Customize installers** in the `installers/` directory
-
-## 📝 Make Commands
-
-```bash
-make all      # Install everything
-make install  # Install dotfiles only
-make deps     # Install dependencies only
-make list     # List all dotfiles to be installed
-make help     # Show available commands
-```
+2. **Edit configurations** under `~/.local/share/chezmoi/` (or via `chezmoi edit`)
+3. **Apply changes** with `chezmoi apply`
+4. **Adjust runtime versions** in `dot_config/mise/config.toml`
+5. **Modify packages** in `dot_Brewfile`
 
 ## 🤝 Contributing
 
@@ -271,7 +233,3 @@ Feel free to open issues or submit pull requests if you have suggestions for imp
 ## 📄 License
 
 This repository is available under the MIT License. Feel free to fork and modify for your own use.
-
-## 🙏 Acknowledgments
-
-Inspired by the dotfiles community and various developers who share their configurations publicly.
