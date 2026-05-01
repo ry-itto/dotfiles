@@ -56,22 +56,42 @@ jobs:
     - name: chezmoi doctor
       run: chezmoi --source="$GITHUB_WORKSPACE" doctor || true
 
-    - name: Apply to ephemeral HOME
+    - name: Apply to ephemeral HOME and verify rendered files
       run: |
         export HOME="$(mktemp -d)"
         export CI=1
+        export XDG_CACHE_HOME="$HOME/.cache"
         chezmoi init --apply --source="$GITHUB_WORKSPACE"
+
+        test -f "$HOME/.zshrc"
+        test -f "$HOME/.config/mise/config.toml"
+        test -f "$HOME/.config/ghostty/config"
+        test -f "$HOME/.hammerspoon/init.lua"
+        test -f "$HOME/Library/Application Support/Code/User/settings.json"
+        test -x "$HOME/.zsh/bin/reload"
+
+        grep -F 'idiomatic_version_file_enable_tools = ["ruby"]' "$HOME/.config/mise/config.toml"
+        grep -F 'appName = "Ghostty"' "$HOME/.hammerspoon/init.lua"
+
+        chezmoi verify --source="$GITHUB_WORKSPACE"
 
     - name: Idempotency check
       run: |
         export HOME="$(mktemp -d)"
         export CI=1
+        export XDG_CACHE_HOME="$HOME/.cache"
         chezmoi init --apply --source="$GITHUB_WORKSPACE"
-        # Second apply should produce no changes
         chezmoi apply --source="$GITHUB_WORKSPACE"
+        status_output="$(chezmoi status --source="$GITHUB_WORKSPACE")"
+        if [ -n "$status_output" ]; then
+          echo "::error::chezmoi status is non-empty after re-apply"
+          echo "$status_output"
+          exit 1
+        fi
         diff_output="$(chezmoi diff --source="$GITHUB_WORKSPACE")"
         if [ -n "$diff_output" ]; then
           echo "::error::chezmoi diff is non-empty after re-apply"
           echo "$diff_output"
           exit 1
         fi
+        chezmoi verify --source="$GITHUB_WORKSPACE"
