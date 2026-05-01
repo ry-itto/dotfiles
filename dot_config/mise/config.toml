@@ -1,5 +1,2 @@
-[tools]
-flutter = "2.8.1"
-rust    = "stable"
-node    = "lts"
-ruby    = "3.3"
+[settings]
+idiomatic_version_file_enable_tools = ["ruby"]

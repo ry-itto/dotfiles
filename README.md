@@ -32,7 +32,7 @@ chezmoi init --apply ry-itto/dotfiles
 3. Run `run_onchange_install-brew-packages.sh` to install Homebrew bundle from `~/.Brewfile`
 4. Run `run_onchange_configure-macos-defaults.sh` and `run_onchange_configure-xcode.sh` to apply system defaults
 5. Run `run_once_install-zplug.sh`, `run_once_install-dein.sh` to bootstrap shell/editor plugin managers
-6. Run `run_once_install-mise-tools.sh` to install language runtimes (flutter, rust, node, ruby) defined in `dot_config/mise/config.toml`
+6. Run `run_once_install-mise-tools.sh` to install any tools defined in `dot_config/mise/config.toml` (グローバルでは言語ランタイムを固定しない方針 — 詳細は [プログラミング言語の管理方針](#-プログラミング言語の管理方針))
 
 ## 🔄 Daily Operations
 
@@ -66,14 +66,14 @@ chezmoi add ~/.somefile
 │   └── bin/executable_reload              # → ~/.zsh/bin/reload (chmod +x)
 ├── dot_gitconfig
 ├── dot_Brewfile
-├── dot_commit_template
 ├── dot_vim/
 ├── dot_hammerspoon/
 ├── dot_claude/                            # → ~/.claude/
 ├── dot_config/
+│   ├── ghostty/config
 │   ├── nvim/
 │   ├── starship.toml
-│   └── mise/config.toml                   # mise tool definitions
+│   └── mise/config.toml                   # mise settings
 ├── private_Library/
 │   └── private_Application Support/Code/User/settings.json   # → VSCode settings
 ├── run_onchange_install-brew-packages.sh.tmpl
@@ -95,19 +95,14 @@ chezmoi add ~/.somefile
 - **Editors**: Neovim, VSCode
 - **Version Control**: Git, GitHub CLI
 
-### Language Runtimes (managed by mise)
+### Language Runtimes
 
-Defined in `dot_config/mise/config.toml`:
-
-- Flutter
-- Rust
-- Node.js
-- Ruby
+[mise](https://mise.jdx.dev/) でプロジェクトごとに管理する。詳細は [プログラミング言語の管理方針](#-プログラミング言語の管理方針) を参照。
 
 ### Other Stacks
 
 - **iOS Development**: Xcode, XcodeGen, xcbeautify
-- **macOS Apps**: Raycast, Hammerspoon, Rectangle, Clipy
+- **macOS Apps**: Ghostty, Raycast, Hammerspoon, Rectangle
 
 ## ⚙️ Configuration
 
@@ -133,8 +128,30 @@ Vim setup is wired up via dein.vim. Plugin manifests live under `dot_vim/rc/`.
 1. **Fork this repository** to create your own version
 2. **Edit configurations** under `~/.local/share/chezmoi/` (or via `chezmoi edit`)
 3. **Apply changes** with `chezmoi apply`
-4. **Adjust runtime versions** in `dot_config/mise/config.toml`
-5. **Modify packages** in `dot_Brewfile`
+4. **Modify packages** in `dot_Brewfile`
+
+## 🧭 プログラミング言語の管理方針
+
+この dotfiles では **プログラミング言語ランタイムの共通設定（グローバルバージョン）を持たない** 方針を採る。
+
+### ルール
+
+- **プロジェクト側で指定されている場合**: そのプロジェクトの `mise.toml` / `.tool-versions` / `.node-version` / `.ruby-version` などに従い、mise（または各プロジェクト指定の方法）で導入する。
+- **その他、ローカルで一時的に必要になった場合**: `mise use -g <tool>@<version>` などで都度グローバルに入れる。dotfiles 側にはコミットしない。
+- **dotfiles 管理下の `dot_config/mise/config.toml`**: 言語ランタイムのバージョンは記述しない。mise 自体の設定（例: `idiomatic_version_file_enable_tools`）に限る。
+
+### 理由
+
+共通設定でランタイムのバージョンを固定すると、
+
+- マシンごと・プロジェクトごとのバージョン差異に追従するために dotfiles 側を頻繁に更新することになる
+- プロジェクト側の指定とグローバル指定が衝突したときの優先順位の調整が面倒
+
+になる。プロジェクト側の指定を常に優先することで、dotfiles を「環境の土台」だけに保つ。
+
+### 例外: Homebrew 経由で入る言語
+
+Homebrew のフォーミュラの依存関係として Python・Ruby などが入ってしまうケースは許容する。`brew bundle` の出力や `/opt/homebrew/Cellar` 配下に入るものは、ツールの動作に必要な副産物とみなす（プロジェクト用途では mise 側を優先する）。
 
 ## 🤝 Contributing
 

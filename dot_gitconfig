@@ -1,5 +1,3 @@
-[commit]
-    template=~/.commit_template
 [user]
     email = 30540303+ry-itto@users.noreply.github.com
     name = ryoya ito
