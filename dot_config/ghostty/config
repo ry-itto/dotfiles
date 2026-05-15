@@ -10,7 +10,6 @@ font-size = 14
 
 # ── Theme / Colors ───────────────────────────────────
 # システムの appearance に追従して light/dark を切替
-theme = light:rose-pine-dawn,dark:rose-pine
 background-opacity = 0.95
 background-blur = true
 minimum-contrast = 1.1
