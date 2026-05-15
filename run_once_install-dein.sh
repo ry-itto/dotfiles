@@ -12,7 +12,4 @@ fi
 tmp_dir=$(mktemp -d)
 trap 'rm -rf "$tmp_dir"' EXIT
 
-curl -fsSL https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > "$tmp_dir/installer.sh"
-chmod u+x "$tmp_dir/installer.sh"
-
-"$tmp_dir/installer.sh" "$INSTALLATION_DIR"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/Shougo/dein-installer.vim/master/installer.sh)"
