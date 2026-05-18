@@ -10,15 +10,14 @@
       "LS(**)",
       "MultiEdit(**)",
       "Read(**)",
-      "TodoRead()",
+      "TodoRead",
       "TodoWrite(**)",
       "WebFetch(domain:*)",
-      "WebSearch(**)",
+      "WebSearch",
       "Write(**)",
       "mcp__sequentialthinking__sequentialthinking"
     ],
     "deny": [
-      "Bash(:(){ :|:& };:)",
       "Bash(> /dev/sda*)",
       "Bash(apt-get install *)",
       "Bash(brew install *)",
