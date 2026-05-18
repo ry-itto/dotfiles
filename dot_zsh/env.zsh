@@ -130,7 +130,7 @@ export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
 export N_PREFIX=$HOME/.n
 export PATH="$PATH:$N_PREFIX/bin"
 
-eval "$(wt shell-init)"
-export WT_WORKTREE_DIR=.worktree
-
 eval "$(mise activate zsh)"
+eval "$(wtp shell-init zsh)"
+
+export PATH="$HOME/Applications/google-cloud-sdk/bin:$PATH"
