@@ -31,11 +31,27 @@ jobs:
           chezmoi execute-template --source="$PWD" < "$tmpl" > "$out"
         done
 
-        # Lint all *.sh in repo (excluding .git) plus rendered templates
-        find . -type f -name "*.sh" -not -path "./.git/*" -print0 \
-          | xargs -0 shellcheck
-        find "$rendered_dir" -type f -name "*.sh" -print0 \
-          | xargs -0 -r shellcheck
+        # shellcheck does not support zsh; filter zsh-shebanged scripts and
+        # the vendored fzf-git.sh out of the target set.
+        targets=()
+        while IFS= read -r -d '' f; do
+          case "$f" in
+            */dot_zsh/functions/fzf-git.sh) continue ;;
+          esac
+          if head -n1 "$f" | grep -qE '^#!.*\bzsh\b'; then
+            continue
+          fi
+          targets+=("$f")
+        done < <(
+          find . -type f -name "*.sh" -not -path "./.git/*" -print0
+          find "$rendered_dir" -type f -name "*.sh" -print0
+        )
+
+        if [ ${#targets[@]} -gt 0 ]; then
+          shellcheck "${targets[@]}"
+        else
+          echo "No shellcheck-eligible scripts in repo (all .sh files are zsh)."
+        fi
 
     - name: Check zsh syntax
       run: |
