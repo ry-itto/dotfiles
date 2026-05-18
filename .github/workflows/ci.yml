@@ -13,10 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install shellcheck
+    - name: Install shellcheck and zsh
       run: |
         sudo apt-get update
-        sudo apt-get install -y shellcheck
+        sudo apt-get install -y shellcheck zsh
 
     - name: Install chezmoi
       run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
