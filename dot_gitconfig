@@ -1,0 +1,15 @@
+[user]
+    email = 30540303+ry-itto@users.noreply.github.com
+    name = ryoya ito
+[core]
+	editor = nvim
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[pull]
+	rebase = false
+	ff = only
+[credential]
+	helper = store

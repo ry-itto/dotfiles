@@ -1,0 +1,53 @@
+# zsh関係
+brew 'zsh'
+brew 'zplug'
+
+# iOS
+brew "xcodegen"
+brew "xcbeautify"
+
+# Flutter
+brew 'usbmuxd'
+brew "libimobiledevice", args: ["HEAD"]
+brew 'ideviceinstaller'
+brew 'ios-deploy'
+
+# MCP
+brew 'uv'
+
+# ツール
+brew 'ag'
+brew 'gh'
+brew 'ghq'
+brew 'fzf'
+brew 'jq'
+brew 'tig'
+brew 'tree'
+brew 'nkf'
+brew 'git'
+brew 'nvim'
+brew 'starship'
+brew 'mise'
+
+# gPRC
+brew 'protobuf'
+
+# ruby-build
+brew 'openssl@3'
+brew 'readline'
+brew 'libyaml'
+brew 'autoconf'
+brew 'gmp'
+
+# Cask
+cask 'ghostty'
+cask 'raycast'
+cask 'font-hack-nerd-font'
+cask 'font-hackgen'
+cask 'font-hackgen-nerd'
+cask 'notion'
+cask 'notion-calendar'
+cask 'figma'
+cask 'discord'
+cask 'rectangle'
+cask 'hammerspoon'

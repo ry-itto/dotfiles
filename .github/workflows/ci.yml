@@ -3,9 +3,6 @@ name: CI
 on:
   push:
     branches: [ main ]
-    paths-ignore:
-      - 'README.md'
-      - '.github/workflows/update-readme.yml'
   pull_request:
     branches: [ main ]
 
@@ -15,224 +12,102 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Install shellcheck
+
+    - name: Install shellcheck and zsh
       run: |
         sudo apt-get update
-        sudo apt-get install -y shellcheck
-    
-    - name: Run shellcheck on shell scripts
+        sudo apt-get install -y shellcheck zsh
+
+    - name: Install chezmoi
+      run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
+
+    - name: Render chezmoi templates and run shellcheck
       run: |
-        find . -type f -name "*.sh" -exec shellcheck {} + || true
-        find . -type f -name "*.zsh" -exec shellcheck --shell=bash {} + 2>/dev/null || true
-    
-    - name: Check for syntax errors in zsh files
-      run: |
-        for file in $(find . -type f -name "*.zsh" -o -name ".zshrc"); do
-          if [[ -f "$file" ]]; then
-            zsh -n "$file" || echo "Syntax check failed for $file"
+        rendered_dir="$(mktemp -d)"
+        # Render *.tmpl run scripts so shellcheck can parse them
+        for tmpl in run_*.sh.tmpl; do
+          [ -f "$tmpl" ] || continue
+          out="$rendered_dir/$(basename "${tmpl%.tmpl}")"
+          chezmoi execute-template --source="$PWD" < "$tmpl" > "$out"
+        done
+
+        # shellcheck does not support zsh; filter zsh-shebanged scripts and
+        # the vendored fzf-git.sh out of the target set.
+        targets=()
+        while IFS= read -r -d '' f; do
+          case "$f" in
+            */dot_zsh/functions/fzf-git.sh) continue ;;
+          esac
+          if head -n1 "$f" | grep -qE '^#!.*\bzsh\b'; then
+            continue
           fi
-        done
+          targets+=("$f")
+        done < <(
+          find . -type f -name "*.sh" -not -path "./.git/*" -print0
+          find "$rendered_dir" -type f -name "*.sh" -print0
+        )
 
-  test:
-    name: Test - ${{ matrix.test-suite }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    continue-on-error: true
-    strategy:
-      matrix:
-        os: [macos-latest]
-        test-suite: 
-          - configuration
-          - installers
-          - symlinks
-        include:
-          - os: macos-13
-            test-suite: symlinks
-      fail-fast: false
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Cache brew dependencies
-      uses: actions/cache@v4
-      env:
-        cache-name: cache-brew-dependencies
-      with:
-        path: |
-          ~/Library/Caches/Homebrew
-          /usr/local/Homebrew
-          /opt/homebrew
-        key: ${{ runner.os }}-${{ matrix.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.Brewfile') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-${{ matrix.os }}-build-
-          ${{ runner.os }}-${{ matrix.os }}-
-    
-    - name: Install Bats
-      run: |
-        if ! command -v bats &> /dev/null; then
-          brew install bats-core
-        fi
-    
-    - name: Run ${{ matrix.test-suite }} tests
-      run: bats tests/${{ matrix.test-suite }}.bats
-    
-  quick-checks:
-    name: Quick Checks
-    runs-on: macos-latest
-    continue-on-error: true
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Test make list
-      run: |
-        make list
-        # Verify that .claude is included
-        make list | grep "\.claude" || exit 1
-    
-    - name: Test make install (dry run)
-      run: |
-        # Create a temporary HOME for testing
-        export TEST_HOME=$(mktemp -d)
-        export HOME=$TEST_HOME
-        make install
-        # Verify symlinks were created
-        ls -la $TEST_HOME
-        # Check that essential dotfiles are linked
-        test -L $TEST_HOME/.zshrc
-        test -L $TEST_HOME/.tmux.conf
-        test -L $TEST_HOME/.gitconfig
-    
-    - name: Test installer syntax
-      run: |
-        for installer in installers/*.sh; do
-          echo "Checking syntax of $installer"
-          zsh -n "$installer"
-        done
-        for installer in settings/**/install.sh; do
-          echo "Checking syntax of $installer"
-          zsh -n "$installer"
-        done
-    
-    - name: Verify critical files exist
-      run: |
-        test -f .Brewfile
-        test -f .zshrc
-        test -f .gitconfig
-        test -f .tmux.conf
-        test -f Makefile
-        test -d .zsh
-        test -d installers
-        test -d settings
-
-  integration:
-    name: Integration Test
-    runs-on: macos-latest
-    needs: [lint]
-    continue-on-error: true
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Cache brew dependencies
-      uses: actions/cache@v4
-      env:
-        cache-name: cache-brew-dependencies
-      with:
-        path: |
-          ~/Library/Caches/Homebrew
-          /usr/local/Homebrew
-          /opt/homebrew
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/.Brewfile') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-    
-    - name: Full installation test
-      run: |
-        # Set up test environment
-        export ORIGINAL_HOME=$HOME
-        export TEST_HOME=$(mktemp -d)
-        export HOME=$TEST_HOME
-        
-        # Run full installation
-        make all || true
-        
-        # Verify installation
-        echo "=== Verifying installation ==="
-        ls -la $TEST_HOME
-        
-        # Check symlinks
-        if [[ -L $TEST_HOME/.zshrc ]]; then
-          echo "✓ .zshrc symlink created"
+        if [ ${#targets[@]} -gt 0 ]; then
+          shellcheck "${targets[@]}"
         else
-          echo "✗ .zshrc symlink missing"
+          echo "No shellcheck-eligible scripts in repo (all .sh files are zsh)."
         fi
-        
-        # Restore HOME
-        export HOME=$ORIGINAL_HOME
-    
-    - name: Test idempotency
-      run: |
-        export TEST_HOME=$(mktemp -d)
-        export HOME=$TEST_HOME
-        
-        # Run install twice to test idempotency
-        make install
-        make install
-        
-        # Should complete without errors
-        echo "✓ Installation is idempotent"
 
-  update-readme:
-    name: Update README
+    - name: Check zsh syntax
+      run: |
+        find . -type f \( -name "*.zsh" -o -name "dot_zshrc" -o -name "executable_*" \) -not -path "./.git/*" -print0 \
+          | while IFS= read -r -d '' file; do
+              zsh -n "$file" || exit 1
+            done
+
+  chezmoi-verify:
+    name: chezmoi verify
     runs-on: macos-latest
-    needs: [integration]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
-    permissions:
-      contents: write
-    
     steps:
     - uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        fetch-depth: 0
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Update README
-      run: |
-        echo "=== Updating README with environment information ==="
-        python3 scripts/update_readme.py
-    
-    - name: Check for changes
-      id: check_changes
-      run: |
-        if [[ -n $(git status --porcelain README.md) ]]; then
-          echo "changes=true" >> $GITHUB_OUTPUT
-          echo "README.md has changes"
-        else
-          echo "changes=false" >> $GITHUB_OUTPUT
-          echo "No changes to README.md"
-        fi
-    
-    - name: Commit and push changes
-      if: steps.check_changes.outputs.changes == 'true'
-      run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        
-        git add README.md
-        git commit -m "docs: update README with latest environment info [skip ci]
 
-        Auto-generated by GitHub Actions
-        Workflow: ${{ github.workflow }}
-        Run: ${{ github.run_number }}"
-        
-        git push
+    - name: Install chezmoi
+      run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
+
+    - name: chezmoi doctor
+      run: chezmoi --source="$GITHUB_WORKSPACE" doctor || true
+
+    - name: Apply to ephemeral HOME and verify rendered files
+      run: |
+        export HOME="$(mktemp -d)"
+        export CI=1
+        export XDG_CACHE_HOME="$HOME/.cache"
+        chezmoi init --apply --source="$GITHUB_WORKSPACE"
+
+        test -f "$HOME/.zshrc"
+        test -f "$HOME/.config/mise/config.toml"
+        test -f "$HOME/.config/ghostty/config"
+        test -f "$HOME/.hammerspoon/init.lua"
+        test -f "$HOME/Library/Application Support/Code/User/settings.json"
+        test -x "$HOME/.zsh/bin/reload"
+
+        grep -F 'idiomatic_version_file_enable_tools = ["ruby"]' "$HOME/.config/mise/config.toml"
+        grep -F 'appName = "Ghostty"' "$HOME/.hammerspoon/init.lua"
+
+        chezmoi verify --source="$GITHUB_WORKSPACE"
+
+    - name: Idempotency check
+      run: |
+        export HOME="$(mktemp -d)"
+        export CI=1
+        export XDG_CACHE_HOME="$HOME/.cache"
+        chezmoi init --apply --source="$GITHUB_WORKSPACE"
+        chezmoi apply --source="$GITHUB_WORKSPACE"
+        status_output="$(chezmoi status --source="$GITHUB_WORKSPACE")"
+        if [ -n "$status_output" ]; then
+          echo "::error::chezmoi status is non-empty after re-apply"
+          echo "$status_output"
+          exit 1
+        fi
+        diff_output="$(chezmoi diff --source="$GITHUB_WORKSPACE")"
+        if [ -n "$diff_output" ]; then
+          echo "::error::chezmoi diff is non-empty after re-apply"
+          echo "$diff_output"
+          exit 1
+        fi
+        chezmoi verify --source="$GITHUB_WORKSPACE"

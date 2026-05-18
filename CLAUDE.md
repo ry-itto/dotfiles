@@ -4,88 +4,113 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a dotfiles repository for macOS development environment setup. It manages system configurations, development tools, and application settings through automated installation scripts.
+This is a dotfiles repository for a macOS development environment, managed by [chezmoi](https://www.chezmoi.io/). Dotfiles, run-once installers, and run-onchange configuration scripts are organized using chezmoi's filename conventions (`dot_*`, `private_*`, `executable_*`, `run_once_*`, `run_onchange_*`).
+
+Language runtimes (Flutter, Rust, Node, Ruby) are managed by [mise](https://mise.jdx.dev/) via `dot_config/mise/config.toml`. Homebrew packages are defined in `dot_Brewfile` and installed by `run_onchange_install-brew-packages.sh.tmpl`.
 
 ## Commands
 
 ### Setup and Installation
+
 ```bash
-# Install all dotfiles and dependencies
-make all
+# First time on a new machine
+brew install chezmoi
+chezmoi init --apply ry-itto/dotfiles
 
-# Only install dotfiles (symlinks and settings)
-make install
+# Pull latest changes from the repo and re-apply
+chezmoi update
 
-# Only install dependencies (brew, tools, etc.)
-make deps
+# See what would change before applying
+chezmoi diff
 
-# List all dotfiles that will be installed
-make list
+# Apply pending changes
+chezmoi apply
 ```
 
-### Manual Installation Scripts
+### Editing Managed Files
+
+After migrating to chezmoi, editing files directly under `$HOME` does **not** sync back to this repository. Always use one of:
+
 ```bash
-# Install Homebrew dependencies
-/bin/zsh installers/brew.sh
+# Open the source file in $EDITOR
+chezmoi edit ~/.zshrc
 
-# Install development tools via mise
-/bin/zsh installers/mise.sh
+# Or jump to the source directory and edit there
+cd "$(chezmoi source-path)"
+$EDITOR dot_zshrc
+chezmoi apply
+```
 
-# Install other tools (run as needed)
-/bin/zsh installers/dein.sh    # Vim plugin manager
-/bin/zsh installers/xcode.sh    # Xcode settings
-/bin/zsh installers/zplug.sh    # Zsh plugin manager
+### Adding New Files
+
+```bash
+# Move an existing $HOME file into chezmoi management
+chezmoi add ~/.somefile
 ```
 
 ## Architecture
 
-### Core Components
+### Source Layout
 
-1. **Makefile**: Main orchestrator that:
-   - Symlinks dotfiles from repo to home directory
-   - Copies `.config/` contents to `~/.config/`
-   - Executes installer scripts in sequence
-   - Excludes `.DS_Store`, `.git`, `.config`, `.ruby-version`, `.github` from symlinking
+The repository **is** the chezmoi source directory. chezmoi reads filename prefixes to decide where each file goes in `$HOME`:
 
-2. **Dotfiles** (symlinked to home):
-   - `.Brewfile`: Homebrew bundle configuration with all packages
-   - `.zshrc`: Main shell configuration that sources modular configs
-   - `.tmux.conf`: Tmux configuration
-   - `.gitconfig`: Git configuration
-   - `.commit_template`: Git commit template
+- `dot_<name>` → `~/.<name>` (e.g. `dot_zshrc` → `~/.zshrc`)
+- `executable_<name>` → preserves +x bit on apply
+- `private_<name>` → applied with mode 0600/0700
+- `<name>.tmpl` → rendered with chezmoi's template engine before apply
+- `run_once_<name>.sh` → executed once per machine
+- `run_onchange_<name>.sh` → executed when the script's content changes
 
-3. **Modular Zsh Configuration** (`.zsh/`):
-   - `alias.zsh`: Command aliases and shortcuts
-   - `env.zsh`: Environment variables
-   - `style.zsh`: Shell appearance and prompt
-   - `plugin.zsh`: Zsh plugin management
+### Top-Level Files
 
-4. **Installers** (`installers/`):
-   - Shell scripts for installing various development tools
-   - `mise.sh`: Installs Flutter, Rust, and Vim via mise
-   - `dein.sh`: Installs dein.vim plugin manager
-   - `xcode.sh`: Configures Xcode settings
-   - `zplug.sh`: Installs zplug shell plugin manager
-   - Each script checks if tool exists before installation
-   - Designed to be idempotent
+**Managed dotfiles** (chezmoi targets):
+- `dot_zshrc` — entrypoint that sources modules under `~/.zsh/`
+- `dot_zsh/` — modular Zsh config: `alias.zsh`, `env.zsh`, `style.zsh`, `plugin.zsh`, `functions/`, `bin/executable_reload`
+- `dot_gitconfig`, `dot_Brewfile`, `dot_commit_template`
+- `dot_vim/`, `dot_hammerspoon/`, `dot_claude/`
+- `dot_config/nvim/`, `dot_config/starship.toml`, `dot_config/mise/config.toml`
+- `private_Library/private_Application Support/Code/User/settings.json` — VSCode user settings
 
-5. **Settings** (`settings/`):
-   - Platform-specific configurations (macOS, VSCode, Xcode)
-   - Each has its own `install.sh` script
+**Run scripts** (executed during `chezmoi apply`):
+- `run_onchange_install-brew-packages.sh.tmpl` — re-runs when `dot_Brewfile` changes
+- `run_onchange_configure-macos-defaults.sh` — `defaults write` for NSGlobalDomain, Finder, key repeat, Caps Lock → Control
+- `run_onchange_configure-xcode.sh` — `defaults write` for Xcode build settings
+- `run_once_install-zplug.sh` — bootstrap zplug
+- `run_once_install-dein.sh` — bootstrap dein.vim
+- `run_once_install-mise-tools.sh` — runs `mise install` for tools defined in `dot_config/mise/config.toml`
+
+**Configuration**:
+- `.chezmoiignore` — paths chezmoi should skip during apply (README, scripts/, CI files, destination-side local files)
+
+**Repository support files** (excluded from `chezmoi apply` via `.chezmoiignore`):
+- `.github/workflows/ci.yml` — lint, chezmoi-verify
+- `README.md`, `CLAUDE.md`, `LICENSE`
+
+### Run Script Execution Order
+
+`chezmoi apply` runs `run_*` scripts in lexical order of their filename. The current ordering ensures:
+
+1. `run_onchange_configure-macos-defaults.sh`
+2. `run_onchange_configure-xcode.sh`
+3. `run_onchange_install-brew-packages.sh` (installs `mise` via Brewfile)
+4. `run_once_install-dein.sh`
+5. `run_once_install-mise-tools.sh` (skips with a notice if `mise` is not yet on PATH)
+6. `run_once_install-zplug.sh`
+
+If `mise` is not yet installed when `run_once_install-mise-tools.sh` runs, the script exits cleanly. Re-running `chezmoi apply` after the brew bundle finishes will trigger it again.
+
+All run scripts honor `CI=1` and exit early in CI to avoid expensive operations.
 
 ## Development Stack
 
-The repository configures a comprehensive development environment for:
-- **iOS Development**: Xcode tools, XcodeGen, Mint
-- **Flutter Development**: Flutter (via mise), Dart, iOS deployment tools
-- **Web Development**: Node.js (via n), various JS tools
-- **General Development**: Git, GitHub CLI, tmux, neovim, starship prompt, Vim (via mise)
-- **Language Support**: Go, Dart, Ruby, Rust (via mise), Flutter (via mise)
+- **iOS Development**: Xcode, XcodeGen, xcbeautify (Homebrew)
+- **Flutter / Rust / Node / Ruby**: managed by mise (`dot_config/mise/config.toml`)
+- **Web Development**: Node.js (via mise), npm/yarn ecosystem
+- **General**: Git, GitHub CLI, Neovim, Starship prompt
 
 ## Key Design Principles
 
-1. **Modularity**: Configurations are split into logical components
-2. **Idempotency**: Scripts can be run multiple times safely
-3. **Automation**: Single `make` command sets up entire environment
-4. **Version Management**: Uses mise for language version management
-5. **Tool Management**: Homebrew as primary package manager with Brewfile for reproducibility
+1. **Single source of truth**: chezmoi manages all dotfiles; mise manages all language runtimes.
+2. **macOS-only**: no OS branching. `defaults write` and other macOS-specific commands run unconditionally.
+3. **Idempotency**: `run_once_*` scripts gate themselves on existence checks; `run_onchange_*` scripts re-run only when their content (or referenced files) change.
+4. **Hand-off to upstream tools**: chezmoi delegates package management to Homebrew (`brew bundle`) and mise (`mise install`) rather than reimplementing version logic.
