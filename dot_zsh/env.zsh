@@ -33,22 +33,8 @@ fi
 GOPATH="$HOME/go"
 export PATH=$PATH:$GOPATH/bin
 
-# python env
-CFLAGS="-I$(brew --prefix readline)/include -I$(brew --prefix openssl)/include -I$(xcrun --show-sdk-path)/usr/include"
-LDFLAGS="-L$(brew --prefix readline)/lib -L$(brew --prefix openssl)/lib"
-PYTHON_CONFIGURE_OPTS=--enable-unicode=ucs2
-
-# mysql path
-export PATH=$PATH:/usr/local/mysql/bin
-
 # cargo(rust)
-export PATH=$PATH:$HOME/.cargo/env
 export PATH=$PATH:$HOME/.cargo/bin
-
-## SDK類
-export PATH=$PATH:$HOME/.nodebrew/current/bin
-export PATH=$PATH:$HOME/.rbenv/bin
-export PATH=$PATH:$HOME/.pyenv/bin
 
 # zplug
 export ZPLUG_HOME=$HOME/.zplug
@@ -56,32 +42,21 @@ export ZPLUG_HOME=$HOME/.zplug
 # zsh bin
 export PATH=$PATH:$HOME/.zsh/bin
 
-# Pub
+# Pub (Flutter/Dart)
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 # fzf
 export FZF_DEFAULT_COMMAND='ag -g ""'
 
 # Visual Studio Code (code)
-export PATH="$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"
-
-# nest
-export PATH="$PATH:$HOME/.nest/bin"
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
 # Starship
 eval "$(starship init zsh)"
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 
-# brew
-if [ `uname -m` = "arm64" ]; then
-    eval $(/opt/homebrew/bin/brew shellenv)
-    export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-fi
-
-# Visual Studio Code (code)
-export PATH="$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin"
-
-# Android platform tools
+# Android environment
+export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
 export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 
 # 履歴の設定
@@ -93,7 +68,7 @@ setopt hist_ignore_dups
 setopt IGNOREEOF
 
 # コマンドミスを修正
-setopt correct 
+setopt correct
 # ビープ音を鳴らさない
 setopt nobeep
 setopt nolistbeep
@@ -103,19 +78,12 @@ setopt auto_cd
 setopt auto_pushd
 setopt pushd_ignore_dups
 
-# フローコントロール無効?
+# フローコントロール無効
 setopt no_flow_control
-
-# env系init
-source "/$HOME/.sdkman/bin/sdkman-init.sh"
 
 # mise
 export PATH="$HOME/.local/bin:$PATH"
 eval "$(~/.local/bin/mise activate zsh)"
-
-# asdf (後方互換性のため残す)
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-fpath=(${ASDF_DIR}/completions $fpath)
 
 # flutter sdk
 export FLUTTER_ROOT="$(mise where flutter 2>/dev/null || echo '')"
@@ -124,13 +92,6 @@ export PATH="$PATH:$HOME/fvm/default/bin"
 # emacs風キーバインドの復活
 bindkey -e
 
-# Android environment variables
-export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
-
-export N_PREFIX=$HOME/.n
-export PATH="$PATH:$N_PREFIX/bin"
-
-eval "$(mise activate zsh)"
 eval "$(wtp shell-init zsh)"
 
 export PATH="$HOME/Applications/google-cloud-sdk/bin:$PATH"
