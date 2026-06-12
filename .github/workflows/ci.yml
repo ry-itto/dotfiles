@@ -13,26 +13,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install shellcheck and zsh
+    - name: Install shellcheck, zsh, lua5.4
       run: |
-        sudo apt-get update
-        sudo apt-get install -y shellcheck zsh
+        sudo apt-get update -q
+        sudo apt-get install -y shellcheck zsh lua5.4
 
     - name: Install chezmoi
       run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
 
-    - name: Render chezmoi templates and run shellcheck
+    - name: shellcheck (bash scripts)
       run: |
         rendered_dir="$(mktemp -d)"
-        # Render *.tmpl run scripts so shellcheck can parse them
         for tmpl in run_*.sh.tmpl; do
           [ -f "$tmpl" ] || continue
           out="$rendered_dir/$(basename "${tmpl%.tmpl}")"
           chezmoi execute-template --source="$PWD" < "$tmpl" > "$out"
         done
 
-        # shellcheck does not support zsh; filter zsh-shebanged scripts and
-        # the vendored fzf-git.sh out of the target set.
         targets=()
         while IFS= read -r -d '' f; do
           case "$f" in
@@ -50,18 +47,115 @@ jobs:
         if [ ${#targets[@]} -gt 0 ]; then
           shellcheck "${targets[@]}"
         else
-          echo "No shellcheck-eligible scripts in repo (all .sh files are zsh)."
+          echo "No bash scripts to check."
         fi
 
-    - name: Check zsh syntax
+    - name: zsh syntax check
       run: |
-        find . -type f \( -name "*.zsh" -o -name "dot_zshrc" -o -name "executable_*" \) -not -path "./.git/*" -print0 \
-          | while IFS= read -r -d '' file; do
-              zsh -n "$file" || exit 1
+        find . -type f \( -name "*.zsh" -o -name "dot_zshrc" -o -name "executable_*" \) \
+            -not -path "./.git/*" -print0 \
+          | while IFS= read -r -d '' f; do
+              zsh -n "$f" && echo "OK: $f" || exit 1
             done
 
-  chezmoi-verify:
-    name: chezmoi verify
+    - name: Lua syntax check (Hammerspoon)
+      run: |
+        find . -name "*.lua" -not -path "./.git/*" -print0 \
+          | while IFS= read -r -d '' f; do
+              luac -p "$f" && echo "OK: $f" || exit 1
+            done
+
+    - name: Brewfile Ruby syntax check
+      run: ruby -c dot_Brewfile && echo "OK: dot_Brewfile"
+
+  validate-configs:
+    name: Validate Configs
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Validate JSON files
+      run: |
+        fail=0
+        while IFS= read -r -d '' f; do
+          if python3 -m json.tool "$f" > /dev/null 2>&1; then
+            echo "OK: $f"
+          else
+            echo "::error file=$f::Invalid JSON"
+            fail=1
+          fi
+        done < <(find . -name "*.json" -not -path "./.git/*" -print0)
+        exit "$fail"
+
+    - name: Validate TOML files
+      run: |
+        python3 - <<'PYEOF'
+        import tomllib, sys
+
+        toml_files = [
+            "dot_config/mise/config.toml",
+            "dot_config/starship.toml",
+        ]
+        fail = False
+        for path in toml_files:
+            try:
+                with open(path, "rb") as f:
+                    tomllib.load(f)
+                print(f"OK: {path}")
+            except Exception as e:
+                print(f"::error file={path}::{e}", file=sys.stderr)
+                fail = True
+        sys.exit(1 if fail else 0)
+        PYEOF
+
+    - name: Verify gitconfig required fields
+      run: |
+        for key in user.name user.email core.editor pull.rebase pull.ff; do
+          val=$(git config --file dot_gitconfig "$key") \
+            && echo "OK: $key = $val" \
+            || { echo "::error::Missing gitconfig key: $key"; exit 1; }
+        done
+
+    - name: Verify mise config
+      run: |
+        python3 - <<'PYEOF'
+        import tomllib, sys
+
+        with open("dot_config/mise/config.toml", "rb") as f:
+            config = tomllib.load(f)
+        tools = config.get("settings", {}).get("idiomatic_version_file_enable_tools", [])
+        if "ruby" not in tools:
+            print("::error::ruby not in idiomatic_version_file_enable_tools", file=sys.stderr)
+            sys.exit(1)
+        print(f"OK: idiomatic_version_file_enable_tools = {tools}")
+        PYEOF
+
+    - name: Verify starship config
+      run: |
+        python3 - <<'PYEOF'
+        import tomllib, sys
+
+        with open("dot_config/starship.toml", "rb") as f:
+            config = tomllib.load(f)
+        errors = []
+        if config.get("add_newline") is not True:
+            errors.append(f"add_newline should be true, got {config.get('add_newline')!r}")
+        if not config.get("package", {}).get("disabled"):
+            errors.append("package.disabled should be true")
+        if errors:
+            for e in errors:
+                print(f"::error::{e}", file=sys.stderr)
+            sys.exit(1)
+        print("OK: add_newline =", config["add_newline"])
+        print("OK: package.disabled =", config["package"]["disabled"])
+        PYEOF
+
+  chezmoi-apply:
+    name: chezmoi Apply & Verify
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
@@ -72,42 +166,106 @@ jobs:
     - name: chezmoi doctor
       run: chezmoi --source="$GITHUB_WORKSPACE" doctor || true
 
-    - name: Apply to ephemeral HOME and verify rendered files
+    - name: Apply to ephemeral HOME and verify
       run: |
-        export HOME="$(mktemp -d)"
+        export HOME
+        HOME="$(mktemp -d)"
         export CI=1
         export XDG_CACHE_HOME="$HOME/.cache"
         chezmoi init --apply --source="$GITHUB_WORKSPACE"
 
-        test -f "$HOME/.zshrc"
-        test -f "$HOME/.config/mise/config.toml"
-        test -f "$HOME/.config/ghostty/config"
-        test -f "$HOME/.hammerspoon/init.lua"
-        test -f "$HOME/Library/Application Support/Code/User/settings.json"
-        test -x "$HOME/.zsh/bin/reload"
+        check_file() {
+          test -f "$1" && echo "OK: $1" || { echo "::error::Missing file: $1"; return 1; }
+        }
+        check_exec() {
+          test -x "$1" && echo "OK (exec): $1" || { echo "::error::Not executable: $1"; return 1; }
+        }
+        check_grep() {
+          grep -qF "$1" "$2" \
+            && echo "OK: '${1}' in $(basename "$2")" \
+            || { echo "::error file=$(basename "$2")::Pattern not found: ${1}"; return 1; }
+        }
 
-        grep -F 'idiomatic_version_file_enable_tools = ["ruby"]' "$HOME/.config/mise/config.toml"
-        grep -F 'appName = "Ghostty"' "$HOME/.hammerspoon/init.lua"
+        fail=0
 
-        chezmoi verify --source="$GITHUB_WORKSPACE"
+        echo "--- File existence ---"
+        check_file "$HOME/.zshrc"                                                || fail=1
+        check_file "$HOME/.zsh/alias.zsh"                                       || fail=1
+        check_file "$HOME/.zsh/env.zsh"                                         || fail=1
+        check_file "$HOME/.zsh/style.zsh"                                       || fail=1
+        check_file "$HOME/.zsh/plugin.zsh"                                      || fail=1
+        check_file "$HOME/.zsh/functions/functions.zsh"                         || fail=1
+        check_exec "$HOME/.zsh/bin/reload"                                      || fail=1
+        check_file "$HOME/.gitconfig"                                           || fail=1
+        check_file "$HOME/.config/mise/config.toml"                             || fail=1
+        check_file "$HOME/.config/starship.toml"                                || fail=1
+        check_file "$HOME/.config/ghostty/config"                               || fail=1
+        check_file "$HOME/.config/nvim/init.vim"                                || fail=1
+        check_file "$HOME/.config/nvim/autoload/plugins/nvim_lsp.vim"          || fail=1
+        check_file "$HOME/.hammerspoon/init.lua"                                || fail=1
+        check_file "$HOME/Library/Application Support/Code/User/settings.json" || fail=1
+        check_file "$HOME/.claude/settings.json"                                || fail=1
+
+        echo "--- Content checks ---"
+        # .zshrc sources all modules
+        check_grep 'source $HOME/.zsh/alias.zsh'  "$HOME/.zshrc" || fail=1
+        check_grep 'source $HOME/.zsh/env.zsh'    "$HOME/.zshrc" || fail=1
+        check_grep 'source $HOME/.zsh/style.zsh'  "$HOME/.zshrc" || fail=1
+        check_grep 'source $HOME/.zsh/plugin.zsh' "$HOME/.zshrc" || fail=1
+
+        # env.zsh tool integrations
+        check_grep 'eval "$(starship init zsh)"'               "$HOME/.zsh/env.zsh" || fail=1
+        check_grep 'eval "$(~/.local/bin/mise activate zsh)"'  "$HOME/.zsh/env.zsh" || fail=1
+
+        # gitconfig key settings
+        check_grep 'editor = nvim'  "$HOME/.gitconfig" || fail=1
+        check_grep 'rebase = false' "$HOME/.gitconfig" || fail=1
+        check_grep 'ff = only'      "$HOME/.gitconfig" || fail=1
+
+        # mise settings
+        check_grep 'idiomatic_version_file_enable_tools = ["ruby"]' \
+          "$HOME/.config/mise/config.toml" || fail=1
+
+        # Hammerspoon
+        check_grep 'appName = "Ghostty"'             "$HOME/.hammerspoon/init.lua" || fail=1
+        check_grep 'hs.hotkey.bind({"alt"}, "space"' "$HOME/.hammerspoon/init.lua" || fail=1
+
+        echo "--- chezmoi verify ---"
+        chezmoi verify --source="$GITHUB_WORKSPACE" || fail=1
+
+        exit "$fail"
+
+  chezmoi-idempotency:
+    name: chezmoi Idempotency
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install chezmoi
+      run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
 
     - name: Idempotency check
       run: |
-        export HOME="$(mktemp -d)"
+        export HOME
+        HOME="$(mktemp -d)"
         export CI=1
         export XDG_CACHE_HOME="$HOME/.cache"
         chezmoi init --apply --source="$GITHUB_WORKSPACE"
         chezmoi apply --source="$GITHUB_WORKSPACE"
+
         status_output="$(chezmoi status --source="$GITHUB_WORKSPACE")"
         if [ -n "$status_output" ]; then
           echo "::error::chezmoi status is non-empty after re-apply"
           echo "$status_output"
           exit 1
         fi
+
         diff_output="$(chezmoi diff --source="$GITHUB_WORKSPACE")"
         if [ -n "$diff_output" ]; then
           echo "::error::chezmoi diff is non-empty after re-apply"
           echo "$diff_output"
           exit 1
         fi
+
         chezmoi verify --source="$GITHUB_WORKSPACE"
+        echo "Idempotency check passed."
