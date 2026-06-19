@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#MISE description="Imperative macOS settings: Caps Lock -> Control, Xcode dynamic build, xcodes"
+#
+# Settings that have no declarative form in [bootstrap.macos.defaults]. Run from
+# the `post-defaults` bootstrap hook (mise run macos-extra).
+set -eu
+
+[ -n "${CI:-}" ] && exit 0
+
+# Map Caps Lock to Control
+defaults write com.apple.keyboard.modifiermapping.1452-640-0 -array-add '{ "HIDKeyboardModifierMappingSrc" = 2; "HIDKeyboardModifierMappingDst" = 4; }'
+
+# Use all available cores for Xcode parallel builds
+defaults write com.apple.dt.Xcode IDEBuildOperationMaxNumberOfConcurrentCompileTasks "$(sysctl -n hw.ncpu)"
+
+# Install latest Xcode when no toolchain is present (requires `xcodes`)
+if ! type xcodebuild >/dev/null 2>&1 && type xcodes >/dev/null 2>&1; then
+	xcodes install --latest
+fi

@@ -56,63 +56,16 @@ vim = "latest"
 "com.apple.dt.Xcode" = { ShowBuildOperationDuration = true, DVTTextEditorTrimWhitespaceOnlyLines = true }
 
 # ---------------------------------------------------------------------------
-# Hooks — delegate to tasks. (Hooks do not expand {{config_root}} and lack
-# $MISE_PROJECT_ROOT, but their cwd is the repo root and `mise run` works, so
-# the real logic lives in tasks where {{config_root}} is available.)
+# Hooks — delegate to file tasks under mise-tasks/. (Hooks do not expand
+# {{config_root}} and lack $MISE_PROJECT_ROOT, but their cwd is the repo root
+# and `mise run` works, so the logic lives in the task scripts where
+# $MISE_PROJECT_ROOT is available.)
 # ---------------------------------------------------------------------------
 [bootstrap.hooks]
 post-packages = "mise run brew-bundle"
 post-defaults = "mise run macos-extra"
 
-# ---------------------------------------------------------------------------
-# Tasks
-# ---------------------------------------------------------------------------
-
-# Homebrew packages incl. casks. mise [bootstrap.packages] only resolves
-# formulae, so the Brewfile (formulae + casks + HEAD) is the source of truth.
-[tasks.brew-bundle]
-description = "Install Homebrew packages (formulae + casks) from Brewfile"
-run = '''
-[ -n "${CI:-}" ] && exit 0
-if ! type brew >/dev/null 2>&1; then
-  echo '`brew` not found. Install Homebrew'
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-if brew bundle check --file "{{config_root}}/Brewfile"; then
-  echo '`brew` dependencies are satisfied'
-else
-  echo 'Install `brew` dependencies...'
-  brew bundle --file "{{config_root}}/Brewfile" -v
-fi
-'''
-
-# Imperative macOS settings with no declarative equivalent.
-[tasks.macos-extra]
-description = "Imperative macOS settings: Caps Lock -> Control, Xcode dynamic build, xcodes"
-run = '''
-[ -n "${CI:-}" ] && exit 0
-# Map Caps Lock to Control
-defaults write com.apple.keyboard.modifiermapping.1452-640-0 -array-add '{ "HIDKeyboardModifierMappingSrc" = 2; "HIDKeyboardModifierMappingDst" = 4; }'
-# Use all available cores for Xcode parallel builds
-defaults write com.apple.dt.Xcode IDEBuildOperationMaxNumberOfConcurrentCompileTasks "$(sysctl -n hw.ncpu)"
-# Install latest Xcode when no toolchain is present (requires `xcodes`)
-if ! type xcodebuild >/dev/null 2>&1 && type xcodes >/dev/null 2>&1; then
-  xcodes install --latest
-fi
-'''
-
-# Runs at bootstrap step 8 (after tools). Runs every bootstrap, so guard for
-# idempotency. Replaces run_once_install-dein.sh / run_once_install-zplug.sh.
-[tasks.bootstrap]
-description = "Install vim/zsh plugin managers (dein, zplug)"
-run = '''
-[ -n "${CI:-}" ] && exit 0
-# dein.vim
-if [ ! -d "$HOME/.cache/dein" ]; then
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/Shougo/dein-installer.vim/master/installer.sh)"
-fi
-# zplug
-if [ ! -d "${ZPLUG_HOME:-$HOME/.zplug}" ]; then
-  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-fi
-'''
+# Tasks are defined as executable scripts under mise-tasks/ (auto-discovered):
+#   mise-tasks/brew-bundle  — Homebrew formulae + casks from Brewfile
+#   mise-tasks/macos-extra  — imperative macOS settings (Caps Lock, Xcode, xcodes)
+#   mise-tasks/bootstrap    — vim/zsh plugin managers; runs at bootstrap step 8

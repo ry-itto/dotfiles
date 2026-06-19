@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#MISE description="Install vim/zsh plugin managers (dein, zplug)"
+#
+# Runs at bootstrap step 8 (after tools). `mise bootstrap` runs the task named
+# `bootstrap` on every invocation, so each step self-gates on an existence check.
+set -eu
+
+[ -n "${CI:-}" ] && exit 0
+
+# dein.vim
+if [ ! -d "$HOME/.cache/dein" ]; then
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/Shougo/dein-installer.vim/master/installer.sh)"
+fi
+
+# zplug
+if [ ! -d "${ZPLUG_HOME:-$HOME/.zplug}" ]; then
+	curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+fi

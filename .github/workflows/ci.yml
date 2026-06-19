@@ -47,6 +47,15 @@ jobs:
             done
         zsh -n home/.zsh/bin/reload
 
+    - name: shellcheck mise task scripts
+      run: shellcheck mise-tasks/*
+
+    - name: Check mise task script syntax
+      run: |
+        for f in mise-tasks/*; do
+          bash -n "$f" || exit 1
+        done
+
   mise-bootstrap-verify:
     name: mise bootstrap verify
     runs-on: macos-latest
