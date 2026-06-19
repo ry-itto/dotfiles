@@ -48,7 +48,9 @@ jobs:
         zsh -n home/.zsh/bin/reload
 
     - name: shellcheck mise task scripts
-      run: shellcheck mise-tasks/*
+      # --severity=warning: ignore info/style notes (e.g. SC2016 on the
+      # intentional literal backticks in echo messages); fail on warning+.
+      run: shellcheck --severity=warning mise-tasks/*
 
     - name: Check mise task script syntax
       run: |
