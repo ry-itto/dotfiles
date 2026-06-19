@@ -56,8 +56,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # The macOS runner ships an older mise that predates `mise bootstrap`
+    # (introduced in 2026.6.6). Install a recent mise explicitly and put it
+    # first on PATH so it shadows the pre-installed one.
     - name: Install mise
-      run: brew install mise
+      uses: jdx/mise-action@v2
+      with:
+        version: 2026.6.11
+        install: false
+        cache: false
+
+    - name: Show mise version
+      run: mise --version
 
     - name: Validate mise.toml (tasks parse, formatting)
       run: |
