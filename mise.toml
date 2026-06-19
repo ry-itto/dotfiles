@@ -1,0 +1,118 @@
+# mise bootstrap configuration for this dotfiles repository.
+#
+# Set up a new machine (mise itself must already be installed, e.g. `brew install mise`):
+#
+#   git clone <repo> && cd <repo>
+#   MISE_EXPERIMENTAL=1 mise bootstrap --yes
+#
+# `mise bootstrap` is experimental and must be enabled. On an already
+# bootstrapped machine `experimental = true` lives in ~/.config/mise/config.toml
+# (symlinked from home/.config/mise/config.toml); on a fresh machine that file
+# does not exist yet, so pass MISE_EXPERIMENTAL=1 the first time.
+#
+# Bootstrap step order (see `mise bootstrap --help`):
+#   1. [bootstrap.packages] install  + post-packages hook  -> Homebrew via Brewfile
+#   2. [dotfiles] apply                                     -> symlinks below
+#   3. [bootstrap.macos.defaults]     + post-defaults hook  -> macOS settings
+#   7. mise install ([tools])                               -> language runtimes
+#   8. task `bootstrap`                                     -> vim/zsh plugin managers
+
+[tools]
+# Flutter development
+flutter = "latest"
+# Rust development
+rust = "stable"
+# Vim/Neovim
+vim = "latest"
+
+# ---------------------------------------------------------------------------
+# Dotfiles — symlink sources under home/ to their $HOME targets.
+# Applied by `mise bootstrap` (or `mise dotfiles apply`).
+# Whole directories that are entirely ours are symlinked as a unit; files that
+# share a parent with non-managed content are symlinked individually.
+# ---------------------------------------------------------------------------
+[dotfiles]
+"~/.zshrc" = { mode = "symlink", source = "home/.zshrc" }
+"~/.zsh" = { mode = "symlink", source = "home/.zsh" }
+"~/.vim" = { mode = "symlink", source = "home/.vim" }
+"~/.gitconfig" = { mode = "symlink", source = "home/.gitconfig" }
+"~/.hammerspoon" = { mode = "symlink", source = "home/.hammerspoon" }
+"~/.claude/settings.json" = { mode = "symlink", source = "home/.claude/settings.json" }
+"~/.config/nvim" = { mode = "symlink", source = "home/.config/nvim" }
+"~/.config/ghostty" = { mode = "symlink", source = "home/.config/ghostty" }
+"~/.config/starship.toml" = { mode = "symlink", source = "home/.config/starship.toml" }
+"~/.config/mise/config.toml" = { mode = "symlink", source = "home/.config/mise/config.toml" }
+"~/Library/Application Support/Code/User/settings.json" = { mode = "symlink", source = "home/Library/Application Support/Code/User/settings.json" }
+
+# ---------------------------------------------------------------------------
+# macOS defaults (declarative). Replaces run_onchange_configure-macos-defaults.sh
+# and the static defaults of run_onchange_configure-xcode.sh. Imperative bits
+# (Caps Lock remap, dynamic core count, xcodes install) live in the
+# post-defaults hook / macos-extra task below.
+# ---------------------------------------------------------------------------
+[bootstrap.macos.defaults]
+"NSGlobalDomain" = { AppleShowAllExtensions = true, KeyRepeat = 2, InitialKeyRepeat = 25, ApplePressAndHoldEnabled = false }
+"com.apple.finder" = { AppleShowAllFiles = true }
+"com.apple.dt.Xcode" = { ShowBuildOperationDuration = true, DVTTextEditorTrimWhitespaceOnlyLines = true }
+
+# ---------------------------------------------------------------------------
+# Hooks — delegate to tasks. (Hooks do not expand {{config_root}} and lack
+# $MISE_PROJECT_ROOT, but their cwd is the repo root and `mise run` works, so
+# the real logic lives in tasks where {{config_root}} is available.)
+# ---------------------------------------------------------------------------
+[bootstrap.hooks]
+post-packages = "mise run brew-bundle"
+post-defaults = "mise run macos-extra"
+
+# ---------------------------------------------------------------------------
+# Tasks
+# ---------------------------------------------------------------------------
+
+# Homebrew packages incl. casks. mise [bootstrap.packages] only resolves
+# formulae, so the Brewfile (formulae + casks + HEAD) is the source of truth.
+[tasks.brew-bundle]
+description = "Install Homebrew packages (formulae + casks) from Brewfile"
+run = '''
+[ -n "${CI:-}" ] && exit 0
+if ! type brew >/dev/null 2>&1; then
+  echo '`brew` not found. Install Homebrew'
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+if brew bundle check --file "{{config_root}}/Brewfile"; then
+  echo '`brew` dependencies are satisfied'
+else
+  echo 'Install `brew` dependencies...'
+  brew bundle --file "{{config_root}}/Brewfile" -v
+fi
+'''
+
+# Imperative macOS settings with no declarative equivalent.
+[tasks.macos-extra]
+description = "Imperative macOS settings: Caps Lock -> Control, Xcode dynamic build, xcodes"
+run = '''
+[ -n "${CI:-}" ] && exit 0
+# Map Caps Lock to Control
+defaults write com.apple.keyboard.modifiermapping.1452-640-0 -array-add '{ "HIDKeyboardModifierMappingSrc" = 2; "HIDKeyboardModifierMappingDst" = 4; }'
+# Use all available cores for Xcode parallel builds
+defaults write com.apple.dt.Xcode IDEBuildOperationMaxNumberOfConcurrentCompileTasks "$(sysctl -n hw.ncpu)"
+# Install latest Xcode when no toolchain is present (requires `xcodes`)
+if ! type xcodebuild >/dev/null 2>&1 && type xcodes >/dev/null 2>&1; then
+  xcodes install --latest
+fi
+'''
+
+# Runs at bootstrap step 8 (after tools). Runs every bootstrap, so guard for
+# idempotency. Replaces run_once_install-dein.sh / run_once_install-zplug.sh.
+[tasks.bootstrap]
+description = "Install vim/zsh plugin managers (dein, zplug)"
+run = '''
+[ -n "${CI:-}" ] && exit 0
+# dein.vim
+if [ ! -d "$HOME/.cache/dein" ]; then
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/Shougo/dein-installer.vim/master/installer.sh)"
+fi
+# zplug
+if [ ! -d "${ZPLUG_HOME:-$HOME/.zplug}" ]; then
+  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+fi
+'''

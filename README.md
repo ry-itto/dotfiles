@@ -1,88 +1,92 @@
 # dotfiles
 
-My personal dotfiles for macOS development environment, managed by [chezmoi](https://www.chezmoi.io/).
+My personal dotfiles for macOS development environment, managed by [`mise bootstrap`](https://mise.jdx.dev/bootstrap.html).
 
 ## 🚀 Quick Start
 
 ```bash
-# Install chezmoi if you don't have it
-brew install chezmoi
+# Install mise if you don't have it
+brew install mise
 
-# Initialize and apply this repository
-chezmoi init --apply ry-itto/dotfiles
+# Clone and bootstrap (MISE_EXPERIMENTAL is required the first time — see below)
+ghq get ry-itto/dotfiles   # or: git clone https://github.com/ry-itto/dotfiles
+cd "$(ghq root)/github.com/ry-itto/dotfiles"
+MISE_EXPERIMENTAL=1 mise bootstrap --yes
 ```
 
 ## 📋 Requirements
 
 - macOS (this configuration is macOS-only)
 - Command Line Tools for Xcode
+- [mise](https://mise.jdx.dev/) ≥ `2026.6.6` (the `mise bootstrap` command was introduced there)
 - Internet connection for downloading packages
 
 ## 🛠 Installation
 
 ```bash
-brew install chezmoi
-chezmoi init --apply ry-itto/dotfiles
+brew install mise
+ghq get ry-itto/dotfiles
+cd "$(ghq root)/github.com/ry-itto/dotfiles"
+MISE_EXPERIMENTAL=1 mise bootstrap --yes
 ```
 
-`chezmoi init --apply` will:
+`mise bootstrap` runs these steps in order (see `mise bootstrap --help`):
 
-1. Clone this repository into `~/.local/share/chezmoi`
-2. Render dotfiles into `$HOME` (e.g. `dot_zshrc` → `~/.zshrc`)
-3. Run `run_onchange_install-brew-packages.sh` to install Homebrew bundle from `~/.Brewfile`
-4. Run `run_onchange_configure-macos-defaults.sh` and `run_onchange_configure-xcode.sh` to apply system defaults
-5. Run `run_once_install-zplug.sh`, `run_once_install-dein.sh` to bootstrap shell/editor plugin managers
-6. Run `run_once_install-mise-tools.sh` to install any tools defined in `dot_config/mise/config.toml` (グローバルでは言語ランタイムを固定しない方針 — 詳細は [プログラミング言語の管理方針](#-プログラミング言語の管理方針))
+1. **Homebrew packages** — the `post-packages` hook runs `mise run brew-bundle`, which installs formulae **and casks** from the `Brewfile` (mise's native `[bootstrap.packages]` only supports formulae, so the `Brewfile` stays the source of truth).
+2. **Dotfiles** — `[dotfiles]` symlinks the sources under `home/` into `$HOME` (e.g. `home/.zshrc` → `~/.zshrc`).
+3. **macOS defaults** — `[bootstrap.macos.defaults]` writes Finder/keyboard/Xcode settings; the `post-defaults` hook runs `mise run macos-extra` for the imperative bits (Caps Lock → Control, Xcode dynamic core count, `xcodes install`).
+4. **Tools** — `mise install` installs the language runtimes in `[tools]` (グローバルでは言語ランタイムを固定しない方針 — 詳細は [プログラミング言語の管理方針](#-プログラミング言語の管理方針)).
+5. **`bootstrap` task** — installs the vim/zsh plugin managers (dein.vim, zplug).
+
+> **Why `MISE_EXPERIMENTAL=1`?** `mise bootstrap` is experimental. On an already-bootstrapped machine `experimental = true` lives in `~/.config/mise/config.toml` (symlinked from `home/.config/mise/config.toml`), but on a fresh machine that file does not exist yet, so the **first** bootstrap must set the env var.
+
+> **One-time mise consolidation:** if a self-installed mise exists at `~/.local/bin/mise` (from `curl mise.run`), it can shadow the Homebrew mise on `PATH`. This repo standardises on the Homebrew mise — remove the self-installed one (`rm ~/.local/bin/mise`) so `mise activate` and `mise bootstrap` use the Homebrew build.
 
 ## 🔄 Daily Operations
 
 ```bash
-# Pull latest changes from this repo and re-apply
-chezmoi update
+# Pull latest changes and re-apply everything
+git -C "$(ghq root)/github.com/ry-itto/dotfiles" pull
+mise bootstrap --yes
 
-# Edit a managed file (opens source file in $EDITOR)
-chezmoi edit ~/.zshrc
+# Preview what bootstrap would do (no changes made)
+mise bootstrap --dry-run
 
-# See what would change before applying
-chezmoi diff
+# Apply only the dotfile symlinks
+mise dotfiles apply
 
-# Add a new file from $HOME into management
-chezmoi add ~/.somefile
+# Show dotfile / package / defaults status
+mise dotfiles status
+mise bootstrap packages status
 ```
 
-> **Note:** After migrating to chezmoi, editing files in `$HOME` directly does **not** sync back to this repository. Use `chezmoi edit` or edit the source file under `~/.local/share/chezmoi`, then `chezmoi apply`.
+> **Note:** dotfiles are **symlinks** into this repository (not copies). Editing `~/.zshrc` edits `home/.zshrc` in the repo directly — no separate "apply" step is needed for content changes. The flip side: **do not delete or move the cloned repo**, or the symlinks will break. New entries (`[tools]`, `[dotfiles]`, packages) still require a `mise bootstrap` run.
 
 ## 📂 Directory Structure
 
 ```
 .
-├── dot_zshrc                              # → ~/.zshrc
-├── dot_zsh/                               # → ~/.zsh/
-│   ├── alias.zsh
-│   ├── env.zsh
-│   ├── plugin.zsh
-│   ├── style.zsh
-│   ├── functions/
-│   └── bin/executable_reload              # → ~/.zsh/bin/reload (chmod +x)
-├── dot_gitconfig
-├── dot_Brewfile
-├── dot_vim/
-├── dot_hammerspoon/
-├── dot_claude/                            # → ~/.claude/
-├── dot_config/
-│   ├── ghostty/config
-│   ├── nvim/
-│   ├── starship.toml
-│   └── mise/config.toml                   # mise settings
-├── private_Library/
-│   └── private_Application Support/Code/User/settings.json   # → VSCode settings
-├── run_onchange_install-brew-packages.sh.tmpl
-├── run_onchange_configure-macos-defaults.sh
-├── run_onchange_configure-xcode.sh
-├── run_once_install-zplug.sh
-├── run_once_install-dein.sh
-├── run_once_install-mise-tools.sh
-├── .chezmoiignore                         # files to skip during apply
+├── mise.toml                              # bootstrap config: [tools] / [dotfiles] / [bootstrap.*] / [tasks]
+├── Brewfile                               # Homebrew formulae + casks (installed via the brew-bundle task)
+├── home/                                  # source tree mirroring $HOME (symlinked by `mise dotfiles apply`)
+│   ├── .zshrc                             # → ~/.zshrc
+│   ├── .zsh/                              # → ~/.zsh/
+│   │   ├── alias.zsh
+│   │   ├── env.zsh
+│   │   ├── plugin.zsh
+│   │   ├── style.zsh
+│   │   ├── functions/
+│   │   └── bin/reload                     # → ~/.zsh/bin/reload (executable)
+│   ├── .gitconfig
+│   ├── .vim/
+│   ├── .hammerspoon/
+│   ├── .claude/settings.json             # → ~/.claude/settings.json (only this file is symlinked)
+│   ├── .config/
+│   │   ├── ghostty/config
+│   │   ├── nvim/
+│   │   ├── starship.toml
+│   │   └── mise/config.toml              # mise settings (incl. experimental = true)
+│   └── Library/Application Support/Code/User/settings.json   # → VSCode settings
 └── .github/workflows/ci.yml
 ```
 
@@ -108,7 +112,7 @@ chezmoi add ~/.somefile
 
 ### Zsh
 
-Modular configuration in `dot_zsh/`:
+Modular configuration in `home/.zsh/`:
 
 - `alias.zsh`: Custom command aliases
 - `env.zsh`: Environment variables and PATH setup
@@ -117,18 +121,18 @@ Modular configuration in `dot_zsh/`:
 
 ### Git
 
-`dot_gitconfig` provides commit template, GitHub CLI helpers, and standard pull/credential settings.
+`home/.gitconfig` provides commit template, GitHub CLI helpers, and standard pull/credential settings.
 
 ### Vim
 
-Vim setup is wired up via dein.vim. Plugin manifests live under `dot_vim/rc/`.
+Vim setup is wired up via dein.vim. Plugin manifests live under `home/.vim/rc/`.
 
 ## 🔧 Customization
 
 1. **Fork this repository** to create your own version
-2. **Edit configurations** under `~/.local/share/chezmoi/` (or via `chezmoi edit`)
-3. **Apply changes** with `chezmoi apply`
-4. **Modify packages** in `dot_Brewfile`
+2. **Edit configurations** under `home/` (or edit the symlinked file in `$HOME` directly — it's the same file)
+3. **Apply new entries** (tools, dotfiles, packages) with `mise bootstrap` — content edits to already-symlinked files need no re-apply
+4. **Modify packages** in `Brewfile`
 
 ## 🧭 プログラミング言語の管理方針
 
@@ -138,7 +142,7 @@ Vim setup is wired up via dein.vim. Plugin manifests live under `dot_vim/rc/`.
 
 - **プロジェクト側で指定されている場合**: そのプロジェクトの `mise.toml` / `.tool-versions` / `.node-version` / `.ruby-version` などに従い、mise（または各プロジェクト指定の方法）で導入する。
 - **その他、ローカルで一時的に必要になった場合**: `mise use -g <tool>@<version>` などで都度グローバルに入れる。dotfiles 側にはコミットしない。
-- **dotfiles 管理下の `dot_config/mise/config.toml`**: 言語ランタイムのバージョンは記述しない。mise 自体の設定（例: `idiomatic_version_file_enable_tools`）に限る。
+- **dotfiles 管理下の `home/.config/mise/config.toml`**: 言語ランタイムのバージョンは記述しない。mise 自体の設定（例: `idiomatic_version_file_enable_tools`、`experimental`）に限る。なお、この dotfiles 環境自体が使う Flutter / Rust / Vim はリポジトリ直下の `mise.toml` の `[tools]` で定義する。
 
 ### 理由
 

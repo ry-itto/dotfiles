@@ -18,96 +18,86 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y shellcheck zsh
 
-    - name: Install chezmoi
-      run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
-
-    - name: Render chezmoi templates and run shellcheck
+    - name: shellcheck (non-zsh shell scripts)
       run: |
-        rendered_dir="$(mktemp -d)"
-        # Render *.tmpl run scripts so shellcheck can parse them
-        for tmpl in run_*.sh.tmpl; do
-          [ -f "$tmpl" ] || continue
-          out="$rendered_dir/$(basename "${tmpl%.tmpl}")"
-          chezmoi execute-template --source="$PWD" < "$tmpl" > "$out"
-        done
-
-        # shellcheck does not support zsh; filter zsh-shebanged scripts and
-        # the vendored fzf-git.sh out of the target set.
+        # The only .sh files are zsh-targeted or vendored (fzf-git.sh); shellcheck
+        # does not support zsh, so filter those out.
         targets=()
         while IFS= read -r -d '' f; do
           case "$f" in
-            */dot_zsh/functions/fzf-git.sh) continue ;;
+            */functions/fzf-git.sh) continue ;;
           esac
           if head -n1 "$f" | grep -qE '^#!.*\bzsh\b'; then
             continue
           fi
           targets+=("$f")
-        done < <(
-          find . -type f -name "*.sh" -not -path "./.git/*" -print0
-          find "$rendered_dir" -type f -name "*.sh" -print0
-        )
+        done < <(find . -type f -name "*.sh" -not -path "./.git/*" -print0)
 
         if [ ${#targets[@]} -gt 0 ]; then
           shellcheck "${targets[@]}"
         else
-          echo "No shellcheck-eligible scripts in repo (all .sh files are zsh)."
+          echo "No shellcheck-eligible scripts (all .sh files are zsh or vendored)."
         fi
 
     - name: Check zsh syntax
       run: |
-        find . -type f \( -name "*.zsh" -o -name "dot_zshrc" -o -name "executable_*" \) -not -path "./.git/*" -print0 \
+        find home -type f \( -name "*.zsh" -o -name ".zshrc" \) -print0 \
           | while IFS= read -r -d '' file; do
               zsh -n "$file" || exit 1
             done
+        zsh -n home/.zsh/bin/reload
 
-  chezmoi-verify:
-    name: chezmoi verify
+  mise-bootstrap-verify:
+    name: mise bootstrap verify
     runs-on: macos-latest
+    env:
+      MISE_EXPERIMENTAL: "1"
+      CI: "1"
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install chezmoi
-      run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
+    - name: Install mise
+      run: brew install mise
 
-    - name: chezmoi doctor
-      run: chezmoi --source="$GITHUB_WORKSPACE" doctor || true
+    - name: Validate mise.toml (tasks parse, formatting)
+      run: |
+        mise trust "$GITHUB_WORKSPACE/mise.toml"
+        mise -C "$GITHUB_WORKSPACE" tasks ls
+        mise -C "$GITHUB_WORKSPACE" fmt --check
 
-    - name: Apply to ephemeral HOME and verify rendered files
+    - name: Apply dotfiles to ephemeral HOME and verify symlinks resolve
       run: |
         export HOME="$(mktemp -d)"
-        export CI=1
-        export XDG_CACHE_HOME="$HOME/.cache"
-        chezmoi init --apply --source="$GITHUB_WORKSPACE"
+        mise trust "$GITHUB_WORKSPACE/mise.toml"
+        mise -C "$GITHUB_WORKSPACE" dotfiles apply -y
 
-        test -f "$HOME/.zshrc"
-        test -f "$HOME/.config/mise/config.toml"
-        test -f "$HOME/.config/ghostty/config"
-        test -f "$HOME/.hammerspoon/init.lua"
-        test -f "$HOME/Library/Application Support/Code/User/settings.json"
+        # Symlinks must resolve to real files (-e follows symlinks)
+        test -e "$HOME/.zshrc"
+        test -e "$HOME/.config/mise/config.toml"
+        test -e "$HOME/.config/ghostty/config"
+        test -e "$HOME/.hammerspoon/init.lua"
+        test -e "$HOME/Library/Application Support/Code/User/settings.json"
         test -x "$HOME/.zsh/bin/reload"
+        test -L "$HOME/.zshrc"  # must be a symlink, not a copy
 
         grep -F 'idiomatic_version_file_enable_tools = ["ruby"]' "$HOME/.config/mise/config.toml"
         grep -F 'appName = "Ghostty"' "$HOME/.hammerspoon/init.lua"
 
-        chezmoi verify --source="$GITHUB_WORKSPACE"
-
-    - name: Idempotency check
+    - name: Full bootstrap plan parses (dry-run, no side effects)
       run: |
         export HOME="$(mktemp -d)"
-        export CI=1
-        export XDG_CACHE_HOME="$HOME/.cache"
-        chezmoi init --apply --source="$GITHUB_WORKSPACE"
-        chezmoi apply --source="$GITHUB_WORKSPACE"
-        status_output="$(chezmoi status --source="$GITHUB_WORKSPACE")"
-        if [ -n "$status_output" ]; then
-          echo "::error::chezmoi status is non-empty after re-apply"
-          echo "$status_output"
+        mise trust "$GITHUB_WORKSPACE/mise.toml"
+        mise -C "$GITHUB_WORKSPACE" bootstrap --dry-run --yes
+
+    - name: Idempotency check (dotfiles status clean after apply)
+      run: |
+        export HOME="$(mktemp -d)"
+        mise trust "$GITHUB_WORKSPACE/mise.toml"
+        mise -C "$GITHUB_WORKSPACE" dotfiles apply -y
+        mise -C "$GITHUB_WORKSPACE" dotfiles apply -y
+        status_output="$(mise -C "$GITHUB_WORKSPACE" dotfiles status 2>&1)"
+        echo "$status_output"
+        if echo "$status_output" | grep -qiE 'pending|differs|missing|conflict'; then
+          echo "::error::dotfiles status not clean after re-apply"
           exit 1
         fi
-        diff_output="$(chezmoi diff --source="$GITHUB_WORKSPACE")"
-        if [ -n "$diff_output" ]; then
-          echo "::error::chezmoi diff is non-empty after re-apply"
-          echo "$diff_output"
-          exit 1
-        fi
-        chezmoi verify --source="$GITHUB_WORKSPACE"
