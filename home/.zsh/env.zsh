@@ -81,9 +81,8 @@ setopt pushd_ignore_dups
 # フローコントロール無効
 setopt no_flow_control
 
-# mise
-export PATH="$HOME/.local/bin:$PATH"
-eval "$(~/.local/bin/mise activate zsh)"
+# mise (installed via Homebrew; resolved from PATH after `brew shellenv` above)
+eval "$(mise activate zsh)"
 
 # flutter sdk
 export FLUTTER_ROOT="$(mise where flutter 2>/dev/null || echo '')"

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#MISE description="Install Homebrew packages (formulae + casks) from Brewfile"
+#
+# mise's native [bootstrap.packages] only resolves Homebrew formulae, so the
+# Brewfile (formulae + casks + HEAD) is the source of truth. Run from the
+# `post-packages` bootstrap hook (mise run brew-bundle).
+set -eu
+
+[ -n "${CI:-}" ] && exit 0
+
+if ! type brew >/dev/null 2>&1; then
+	echo '`brew` not found. Install Homebrew'
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+if brew bundle check --file "$MISE_PROJECT_ROOT/Brewfile"; then
+	echo '`brew` dependencies are satisfied'
+else
+	echo 'Install `brew` dependencies...'
+	brew bundle --file "$MISE_PROJECT_ROOT/Brewfile" -v
+fi

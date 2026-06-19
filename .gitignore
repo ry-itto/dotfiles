@@ -1,21 +1,21 @@
 .netrwhist
 .DS_Store
 
-# Local environment settings
-dot_zsh/env_local.zsh
+# Local environment settings (machine-specific; lives inside the symlinked ~/.zsh)
+home/.zsh/env_local.zsh
 
 # Worktree directories
 .worktree/
 
-# Claude AI (local settings only)
-dot_claude/local/
-dot_claude/settings.local.json
-dot_claude/hooks/
-dot_claude/projects/
-dot_claude/scripts/
-dot_claude/shell-snapshots/
-dot_claude/statsig/
-dot_claude/todos/
+# Claude AI (local settings only; ~/.claude is a real dir, only settings.json is symlinked)
+home/.claude/local/
+home/.claude/settings.local.json
+home/.claude/hooks/
+home/.claude/projects/
+home/.claude/scripts/
+home/.claude/shell-snapshots/
+home/.claude/statsig/
+home/.claude/todos/
 
 # Firebase
 firebase-debug.log

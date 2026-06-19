@@ -4,113 +4,85 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a dotfiles repository for a macOS development environment, managed by [chezmoi](https://www.chezmoi.io/). Dotfiles, run-once installers, and run-onchange configuration scripts are organized using chezmoi's filename conventions (`dot_*`, `private_*`, `executable_*`, `run_once_*`, `run_onchange_*`).
+This is a dotfiles repository for a macOS development environment, managed by [`mise bootstrap`](https://mise.jdx.dev/bootstrap.html). A single `mise.toml` at the repo root declares everything: language runtimes (`[tools]`), dotfile symlinks (`[dotfiles]`), macOS defaults (`[bootstrap.macos.defaults]`), lifecycle hooks (`[bootstrap.hooks]`), and tasks (`[tasks]`). Homebrew packages live in `Brewfile`.
 
-Language runtimes (Flutter, Rust, Node, Ruby) are managed by [mise](https://mise.jdx.dev/) via `dot_config/mise/config.toml`. Homebrew packages are defined in `dot_Brewfile` and installed by `run_onchange_install-brew-packages.sh.tmpl`.
+> `mise bootstrap` is **experimental** (requires `experimental = true` / `MISE_EXPERIMENTAL=1`) and was introduced in mise **2026.6.6**. mise itself is installed via Homebrew (`brew 'mise'` in `Brewfile`); bootstrap is a mise subcommand, so mise must exist before it can run.
 
 ## Commands
 
 ### Setup and Installation
 
 ```bash
-# First time on a new machine
-brew install chezmoi
-chezmoi init --apply ry-itto/dotfiles
+# First time on a new machine (mise must already be installed via brew)
+brew install mise
+ghq get ry-itto/dotfiles
+cd "$(ghq root)/github.com/ry-itto/dotfiles"
+MISE_EXPERIMENTAL=1 mise bootstrap --yes   # env var needed on first run only
 
-# Pull latest changes from the repo and re-apply
-chezmoi update
+# Pull latest changes and re-apply
+git pull && mise bootstrap --yes
 
-# See what would change before applying
-chezmoi diff
+# Preview without making changes
+mise bootstrap --dry-run
 
-# Apply pending changes
-chezmoi apply
+# Apply only the dotfile symlinks
+mise dotfiles apply
 ```
 
 ### Editing Managed Files
 
-After migrating to chezmoi, editing files directly under `$HOME` does **not** sync back to this repository. Always use one of:
+Dotfiles are **symlinks** into `home/` (not copies). Editing `~/.zshrc` edits `home/.zshrc` in this repo directly — no apply step is needed for content changes. Run `mise bootstrap` only when adding new `[tools]` / `[dotfiles]` / packages.
 
-```bash
-# Open the source file in $EDITOR
-chezmoi edit ~/.zshrc
-
-# Or jump to the source directory and edit there
-cd "$(chezmoi source-path)"
-$EDITOR dot_zshrc
-chezmoi apply
-```
+> **Do not delete or move the cloned repo** — the symlinks point into it and would break.
 
 ### Adding New Files
 
-```bash
-# Move an existing $HOME file into chezmoi management
-chezmoi add ~/.somefile
-```
+Add the source file under `home/` (mirroring its `$HOME` path), then add a `[dotfiles]` entry in `mise.toml` and run `mise dotfiles apply`. `mise dotfiles add ~/.somefile` can do both steps.
 
 ## Architecture
 
 ### Source Layout
 
-The repository **is** the chezmoi source directory. chezmoi reads filename prefixes to decide where each file goes in `$HOME`:
+- `mise.toml` — bootstrap config: `[tools]`, `[dotfiles]`, `[bootstrap.macos.defaults]`, `[bootstrap.hooks]`, `[tasks]`.
+- `Brewfile` — Homebrew formulae **and casks**. mise's native `[bootstrap.packages]` only resolves formulae, so the Brewfile is the source of truth and is installed via the `brew-bundle` task.
+- `home/` — source tree mirroring `$HOME`. Each file/dir is symlinked to its target by `[dotfiles]` (e.g. `home/.zshrc` → `~/.zshrc`). Executable bits are preserved through the symlink.
+- `home/.config/mise/config.toml` — the user's **global** mise settings (`idiomatic_version_file_enable_tools`, `experimental = true`), symlinked to `~/.config/mise/config.toml`. Distinct from the repo-root `mise.toml` (the bootstrap orchestrator).
 
-- `dot_<name>` → `~/.<name>` (e.g. `dot_zshrc` → `~/.zshrc`)
-- `executable_<name>` → preserves +x bit on apply
-- `private_<name>` → applied with mode 0600/0700
-- `<name>.tmpl` → rendered with chezmoi's template engine before apply
-- `run_once_<name>.sh` → executed once per machine
-- `run_onchange_<name>.sh` → executed when the script's content changes
+### Bootstrap Step Order
 
-### Top-Level Files
+`mise bootstrap` runs steps in this fixed order (see `mise bootstrap --help`):
 
-**Managed dotfiles** (chezmoi targets):
-- `dot_zshrc` — entrypoint that sources modules under `~/.zsh/`
-- `dot_zsh/` — modular Zsh config: `alias.zsh`, `env.zsh`, `style.zsh`, `plugin.zsh`, `functions/`, `bin/executable_reload`
-- `dot_gitconfig`, `dot_Brewfile`, `dot_commit_template`
-- `dot_vim/`, `dot_hammerspoon/`, `dot_claude/`
-- `dot_config/nvim/`, `dot_config/starship.toml`, `dot_config/mise/config.toml`
-- `private_Library/private_Application Support/Code/User/settings.json` — VSCode user settings
+1. `[bootstrap.packages]` install + `post-packages` hook → `mise run brew-bundle` (Homebrew formulae + casks from `Brewfile`).
+2. `[dotfiles]` apply → symlinks under `home/`.
+3. `[bootstrap.macos.defaults]` + `post-defaults` hook → declarative defaults, then `mise run macos-extra` for imperative settings (Caps Lock → Control, Xcode dynamic core count, `xcodes install`).
+4. `mise install` → language runtimes in `[tools]` (Flutter, Rust, Vim).
+5. `bootstrap` task → vim/zsh plugin managers (dein.vim, zplug).
 
-**Run scripts** (executed during `chezmoi apply`):
-- `run_onchange_install-brew-packages.sh.tmpl` — re-runs when `dot_Brewfile` changes
-- `run_onchange_configure-macos-defaults.sh` — `defaults write` for NSGlobalDomain, Finder, key repeat, Caps Lock → Control
-- `run_onchange_configure-xcode.sh` — `defaults write` for Xcode build settings
-- `run_once_install-zplug.sh` — bootstrap zplug
-- `run_once_install-dein.sh` — bootstrap dein.vim
-- `run_once_install-mise-tools.sh` — runs `mise install` for tools defined in `dot_config/mise/config.toml`
+Hooks delegate to tasks because hooks do **not** expand `{{config_root}}` and lack `$MISE_PROJECT_ROOT`; tasks do (and `mise run` works from a hook since the hook's cwd is the repo root).
 
-**Configuration**:
-- `.chezmoiignore` — paths chezmoi should skip during apply (README, scripts/, CI files, destination-side local files)
+### Tasks (`[tasks]` in mise.toml)
 
-**Repository support files** (excluded from `chezmoi apply` via `.chezmoiignore`):
-- `.github/workflows/ci.yml` — lint, chezmoi-verify
-- `README.md`, `CLAUDE.md`, `LICENSE`
+- `brew-bundle` — `brew bundle` from `Brewfile`. Uses `{{config_root}}/Brewfile`.
+- `macos-extra` — imperative macOS settings with no declarative form.
+- `bootstrap` — dein.vim + zplug installers. Runs **every** bootstrap, so each step self-gates on an existence check for idempotency.
 
-### Run Script Execution Order
+All tasks exit early when `CI` is set (`[ -n "${CI:-}" ] && exit 0`).
 
-`chezmoi apply` runs `run_*` scripts in lexical order of their filename. The current ordering ensures:
+### CI (`.github/workflows/ci.yml`)
 
-1. `run_onchange_configure-macos-defaults.sh`
-2. `run_onchange_configure-xcode.sh`
-3. `run_onchange_install-brew-packages.sh` (installs `mise` via Brewfile)
-4. `run_once_install-dein.sh`
-5. `run_once_install-mise-tools.sh` (skips with a notice if `mise` is not yet on PATH)
-6. `run_once_install-zplug.sh`
-
-If `mise` is not yet installed when `run_once_install-mise-tools.sh` runs, the script exits cleanly. Re-running `chezmoi apply` after the brew bundle finishes will trigger it again.
-
-All run scripts honor `CI=1` and exit early in CI to avoid expensive operations.
+- **lint** (ubuntu): shellcheck for non-zsh `.sh`, `zsh -n` syntax check on `home/` zsh files.
+- **mise-bootstrap-verify** (macOS): `brew install mise`, validate `mise.toml` (`tasks ls`, `fmt --check`), `mise dotfiles apply` to an ephemeral HOME and assert symlinks resolve, `mise bootstrap --dry-run`, and an idempotency check. Runs with `CI=1` and `MISE_EXPERIMENTAL=1`.
 
 ## Development Stack
 
 - **iOS Development**: Xcode, XcodeGen, xcbeautify (Homebrew)
-- **Flutter / Rust / Node / Ruby**: managed by mise (`dot_config/mise/config.toml`)
-- **Web Development**: Node.js (via mise), npm/yarn ecosystem
-- **General**: Git, GitHub CLI, Neovim, Starship prompt
+- **Flutter / Rust / Vim**: managed by mise (`[tools]` in `mise.toml`)
+- **General**: Git, GitHub CLI, Neovim, Starship prompt, Ghostty, Hammerspoon
 
 ## Key Design Principles
 
-1. **Single source of truth**: chezmoi manages all dotfiles; mise manages all language runtimes.
+1. **Single source of truth**: `mise bootstrap` (`mise.toml`) manages dotfiles, packages, defaults, and tools; Homebrew owns package installation via `Brewfile`.
 2. **macOS-only**: no OS branching. `defaults write` and other macOS-specific commands run unconditionally.
-3. **Idempotency**: `run_once_*` scripts gate themselves on existence checks; `run_onchange_*` scripts re-run only when their content (or referenced files) change.
-4. **Hand-off to upstream tools**: chezmoi delegates package management to Homebrew (`brew bundle`) and mise (`mise install`) rather than reimplementing version logic.
+3. **Idempotency**: declarative steps (dotfiles, defaults, tools) converge; the `bootstrap` task self-gates on existence checks because it runs on every bootstrap.
+4. **Hand-off to upstream tools**: bootstrap delegates package management to Homebrew (`brew bundle`) and runtime management to mise (`mise install`) rather than reimplementing version logic.
+5. **Symlinks, not copies**: dotfiles live in `home/` and are symlinked into `$HOME`; the repo must remain present at its clone location.
