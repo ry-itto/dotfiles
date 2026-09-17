@@ -2,3 +2,8 @@
 fbr() {
     _fzf_git_each_ref --no-multi | xargs git checkout
 }
+
+# cbn - print the current branch name
+cbn() {
+    git symbolic-ref --short HEAD
+}
