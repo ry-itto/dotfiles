@@ -24,9 +24,9 @@ export EDITOR=vi
 export PAGER='less'
 
 # brew
-if [ `uname -m` = "arm64" ]; then
+if [[ "$(uname -m)" == "arm64" ]]; then
     export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-    eval $(/opt/homebrew/bin/brew shellenv)
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 # GO env
