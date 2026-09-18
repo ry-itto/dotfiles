@@ -3,12 +3,12 @@ brew 'zsh'
 brew 'zplug'
 
 # iOS
-brew "xcodegen"
-brew "xcbeautify"
+brew 'xcodegen'
+brew 'xcbeautify'
 
 # Flutter
 brew 'usbmuxd'
-brew "libimobiledevice", args: ["HEAD"]
+brew 'libimobiledevice', args: ['HEAD']
 brew 'ideviceinstaller'
 brew 'ios-deploy'
 
