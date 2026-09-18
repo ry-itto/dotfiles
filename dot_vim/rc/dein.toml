@@ -38,7 +38,6 @@ repo = 'vim-airline/vim-airline'
 repo = 'arcticicestudio/nord-vim'
 hook_add = '''
     colorscheme nord
-    syntax on
 '''
 
 # Dev unitilities
