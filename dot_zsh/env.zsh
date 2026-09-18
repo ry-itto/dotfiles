@@ -31,19 +31,19 @@ fi
 
 # GO env
 GOPATH="$HOME/go"
-export PATH=$PATH:$GOPATH/bin
+export PATH="$PATH:$GOPATH/bin"
 
 # cargo(rust)
-export PATH=$PATH:$HOME/.cargo/bin
+export PATH="$PATH:$HOME/.cargo/bin"
 
 # zplug
 export ZPLUG_HOME=$HOME/.zplug
 
 # zsh bin
-export PATH=$PATH:$HOME/.zsh/bin
+export PATH="$PATH:$HOME/.zsh/bin"
 
 # Pub (Flutter/Dart)
-export PATH="$PATH":"$HOME/.pub-cache/bin"
+export PATH="$PATH:$HOME/.pub-cache/bin"
 
 # fzf
 export FZF_DEFAULT_COMMAND='ag -g ""'
