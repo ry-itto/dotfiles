@@ -1,6 +1,5 @@
 "文字コードをUTF-8にする"
 set fenc=utf-8
-set encoding=utf8
 "バックアップファイルを作らない"
 set nobackup
 "スワップファイルを作らない"
