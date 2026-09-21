@@ -3,7 +3,7 @@ set -eu
 
 [[ -n "${CI:-}" ]] && exit 0
 
-if ! type "xcodebuild" > /dev/null; then
+if ! command -v xcodebuild >/dev/null 2>&1; then
 	xcodes install --latest
 fi
 

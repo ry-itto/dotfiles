@@ -3,7 +3,7 @@ set -eu
 
 [[ -n "${CI:-}" ]] && exit 0
 
-if ! type "brew" > /dev/null; then
+if ! command -v brew >/dev/null 2>&1; then
 	echo '`brew` not found. Install Homebrew'
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
