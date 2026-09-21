@@ -5,10 +5,10 @@ repo = 'Shougo/dein.vim'
 [[plugins]]
 repo = 'wsdjeg/dein-ui.vim'
 
-# File unitilities
+# File utilities
 [[plugins]]
 repo = 'scrooloose/nerdtree'
-hook_add = '''    
+hook_add = '''
     nnoremap <C-t> :NERDTreeToggle<CR>
     nnoremap <C-n> :NERDTreeFocus<CR>
     let g:NERDTreeShowHidden=1
@@ -40,7 +40,7 @@ hook_add = '''
     colorscheme nord
 '''
 
-# Dev unitilities
+# Dev utilities
 [[plugins]]
 repo = 'airblade/vim-gitgutter'
 
