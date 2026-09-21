@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a dotfiles repository for a macOS development environment, managed by [chezmoi](https://www.chezmoi.io/). Dotfiles, run-once installers, and run-onchange configuration scripts are organized using chezmoi's filename conventions (`dot_*`, `private_*`, `executable_*`, `run_once_*`, `run_onchange_*`).
 
-Language runtimes (Flutter, Rust, Node, Ruby) are managed by [mise](https://mise.jdx.dev/) via `dot_config/mise/config.toml`. Homebrew packages are defined in `dot_Brewfile` and installed by `run_onchange_install-brew-packages.sh.tmpl`.
+Language runtimes are managed by [mise](https://mise.jdx.dev/). Tool versions (currently Flutter, Rust, Vim) are pinned in `.mise.toml` at the repository root. chezmoi does **not** apply that file to `$HOME` — entries whose name starts with `.` in the source directory are chezmoi-internal — so it takes effect only inside this repository's directory tree. `dot_config/mise/config.toml` → `~/.config/mise/config.toml` carries mise `[settings]` only. Homebrew packages are defined in `dot_Brewfile` and installed by `run_onchange_install-brew-packages.sh.tmpl`.
 
 ## Commands
 
@@ -77,7 +77,7 @@ The repository **is** the chezmoi source directory. chezmoi reads filename prefi
 - `run_onchange_configure-xcode.sh` — `defaults write` for Xcode build settings
 - `run_once_install-zplug.sh` — bootstrap zplug
 - `run_once_install-dein.sh` — bootstrap dein.vim
-- `run_once_install-mise-tools.sh` — runs `mise install` for tools defined in `dot_config/mise/config.toml`
+- `run_once_install-mise-tools.sh` — runs `mise install`. chezmoi executes run scripts with the working directory set to the destination (`$HOME`), so this resolves `~/.config/mise/config.toml` and `~/.tool-versions` — not the repository's `.mise.toml`.
 
 **Configuration**:
 - `.chezmoiignore` — paths chezmoi should skip during apply (README, scripts/, CI files, destination-side local files)
@@ -104,8 +104,8 @@ All run scripts honor `CI=1` and exit early in CI to avoid expensive operations.
 ## Development Stack
 
 - **iOS Development**: Xcode, XcodeGen, xcbeautify (Homebrew)
-- **Flutter / Rust / Node / Ruby**: managed by mise (`dot_config/mise/config.toml`)
-- **Web Development**: Node.js (via mise), npm/yarn ecosystem
+- **Flutter / Rust / Vim**: pinned by mise in `.mise.toml` (repository root)
+- **Web Development**: Node.js, npm/yarn ecosystem
 - **General**: Git, GitHub CLI, Neovim, Starship prompt
 
 ## Key Design Principles
