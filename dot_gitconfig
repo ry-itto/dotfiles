@@ -1,6 +1,6 @@
 [user]
-    email = 30540303+ry-itto@users.noreply.github.com
-    name = ryoya ito
+	email = 30540303+ry-itto@users.noreply.github.com
+	name = ryoya ito
 [core]
 	editor = nvim
 [filter "lfs"]
