@@ -36,4 +36,3 @@ repo = 'nvim-lua/plenary.nvim'
 
 [[plugins]]
 repo = 'stevearc/dressing.nvim'
-

@@ -23,4 +23,3 @@ zstyle ':vcs_info:*' actionformats '[%b|%a]'
 
 # 補完候補もLS_COLORSに合わせて色が付くようにする
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-

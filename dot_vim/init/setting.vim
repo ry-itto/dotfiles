@@ -34,4 +34,3 @@ set shiftwidth=4
 set softtabstop=0
 "新しいウィンドウを下に開く"
 set splitbelow
-
