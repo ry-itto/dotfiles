@@ -1,7 +1,7 @@
-au BufNewFile,BufRead Appfile set ft=ruby
-au BufNewFile,BufRead Deliverfile set ft=ruby
-au BufNewFile,BufRead Fastfile set ft=ruby
-au BufNewFile,BufRead Gymfile set ft=ruby
-au BufNewFile,BufRead Matchfile set ft=ruby
-au BufNewFile,BufRead Snapfile set ft=ruby
-au BufNewFile,BufRead Scanfile set ft=ruby
+autocmd BufRead,BufNewFile Appfile     set filetype=ruby
+autocmd BufRead,BufNewFile Deliverfile set filetype=ruby
+autocmd BufRead,BufNewFile Fastfile    set filetype=ruby
+autocmd BufRead,BufNewFile Gymfile     set filetype=ruby
+autocmd BufRead,BufNewFile Matchfile   set filetype=ruby
+autocmd BufRead,BufNewFile Snapfile    set filetype=ruby
+autocmd BufRead,BufNewFile Scanfile    set filetype=ruby
