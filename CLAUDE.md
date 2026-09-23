@@ -66,7 +66,7 @@ The repository **is** the chezmoi source directory. chezmoi reads filename prefi
 **Managed dotfiles** (chezmoi targets):
 - `dot_zshrc` — entrypoint that sources modules under `~/.zsh/`
 - `dot_zsh/` — modular Zsh config: `alias.zsh`, `env.zsh`, `style.zsh`, `plugin.zsh`, `functions/`, `bin/executable_reload`
-- `dot_gitconfig`, `dot_Brewfile`, `dot_commit_template`
+- `dot_gitconfig`, `dot_Brewfile`
 - `dot_vim/`, `dot_hammerspoon/`, `dot_claude/`
 - `dot_config/nvim/`, `dot_config/starship.toml`, `dot_config/mise/config.toml`
 - `private_Library/private_Application Support/Code/User/settings.json` — VSCode user settings
