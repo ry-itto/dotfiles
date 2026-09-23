@@ -80,7 +80,7 @@ The repository **is** the chezmoi source directory. chezmoi reads filename prefi
 - `run_once_install-mise-tools.sh` — runs `mise install`. chezmoi executes run scripts with the working directory set to the destination (`$HOME`), so this resolves `~/.config/mise/config.toml` and `~/.tool-versions` — not the repository's `.mise.toml`.
 
 **Configuration**:
-- `.chezmoiignore` — paths chezmoi should skip during apply (README, scripts/, CI files, destination-side local files)
+- `.chezmoiignore` — paths chezmoi should skip during apply (`README.md`, `LICENSE`, `CLAUDE.md`, `.github`, `.gitignore`, and destination-side local files)
 
 **Repository support files** (excluded from `chezmoi apply` via `.chezmoiignore`):
 - `.github/workflows/ci.yml` — lint, chezmoi-verify
@@ -88,7 +88,7 @@ The repository **is** the chezmoi source directory. chezmoi reads filename prefi
 
 ### Run Script Execution Order
 
-`chezmoi apply` runs `run_*` scripts in lexical order of their filename. The current ordering ensures:
+`chezmoi apply` runs `run_*` scripts in lexical order of the name with the `run_once_` / `run_onchange_` prefix and any `.tmpl` suffix stripped — **not** of the raw filename, so `run_once_*` and `run_onchange_*` interleave. The current ordering ensures:
 
 1. `run_onchange_configure-macos-defaults.sh`
 2. `run_onchange_configure-xcode.sh`
