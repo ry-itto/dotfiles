@@ -29,10 +29,11 @@ chezmoi init --apply ry-itto/dotfiles
 
 1. Clone this repository into `~/.local/share/chezmoi`
 2. Render dotfiles into `$HOME` (e.g. `dot_zshrc` → `~/.zshrc`)
-3. Run `run_onchange_install-brew-packages.sh` to install Homebrew bundle from `~/.Brewfile`
-4. Run `run_onchange_configure-macos-defaults.sh` and `run_onchange_configure-xcode.sh` to apply system defaults
-5. Run `run_once_install-zplug.sh`, `run_once_install-dein.sh` to bootstrap shell/editor plugin managers
+3. Run `run_onchange_configure-macos-defaults.sh` and `run_onchange_configure-xcode.sh` to apply system defaults
+4. Run `run_onchange_install-brew-packages.sh` to install the Homebrew bundle from `~/.Brewfile`
+5. Run `run_once_install-dein.sh` to bootstrap dein.vim
 6. Run `run_once_install-mise-tools.sh` to install any tools defined in `dot_config/mise/config.toml` (グローバルでは言語ランタイムを固定しない方針 — 詳細は [プログラミング言語の管理方針](#-プログラミング言語の管理方針))
+7. Run `run_once_install-zplug.sh` to bootstrap zplug
 
 ## 🔄 Daily Operations
 
@@ -117,7 +118,7 @@ Modular configuration in `dot_zsh/`:
 
 ### Git
 
-`dot_gitconfig` provides commit template, GitHub CLI helpers, and standard pull/credential settings.
+`dot_gitconfig` sets the commit identity, `nvim` as the editor, Git LFS filters, and pull/credential defaults.
 
 ### Vim
 
