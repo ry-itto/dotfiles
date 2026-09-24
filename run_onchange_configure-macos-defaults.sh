@@ -17,7 +17,7 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 25
 defaults write com.apple.finder AppleShowAllFiles TRUE
 
 # Disable press-and-hold for keys (allows key repeat)
-defaults write -g ApplePressAndHoldEnabled -bool false
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Map Caps Lock to Control
 defaults write com.apple.keyboard.modifiermapping.1452-640-0 -array-add '{ "HIDKeyboardModifierMappingSrc" = 2; "HIDKeyboardModifierMappingDst" = 4; }'
