@@ -21,24 +21,30 @@ jobs:
     - name: Install chezmoi
       run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
 
-    - name: Render chezmoi templates and run shellcheck
+    - name: Render chezmoi templates and lint shell scripts
       run: |
         rendered_dir="$(mktemp -d)"
-        # Render *.tmpl run scripts so shellcheck can parse them
+        # Render *.tmpl run scripts so they can be linted too
         for tmpl in run_*.sh.tmpl; do
           [ -f "$tmpl" ] || continue
           out="$rendered_dir/$(basename "${tmpl%.tmpl}")"
           chezmoi execute-template --source="$PWD" < "$tmpl" > "$out"
         done
 
-        # shellcheck does not support zsh; filter zsh-shebanged scripts and
-        # the vendored fzf-git.sh out of the target set.
+        # shellcheck does not support zsh, so zsh-shebanged scripts are checked
+        # with `zsh -n` instead of being dropped on the floor. The vendored
+        # fzf-git.sh is skipped entirely.
+        # NOTE: the loop is fed by process substitution, not a pipe, so it runs
+        # in the current shell and `exit 1` below aborts the step. Rewriting
+        # this as `find ... | while` would make the zsh check silently stop
+        # failing the build.
         targets=()
         while IFS= read -r -d '' f; do
           case "$f" in
             */dot_zsh/functions/fzf-git.sh) continue ;;
           esac
           if head -n1 "$f" | grep -qE '^#!.*\bzsh\b'; then
+            zsh -n "$f" || exit 1
             continue
           fi
           targets+=("$f")
