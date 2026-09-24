@@ -1,9 +1,9 @@
 -- Terminal App の表示/非表示を切り替える関数
-local open_terminal = function()
+local function open_terminal()
     local appName = "Ghostty"
     local app = hs.application.get(appName)
 
-    if app == nil or app:isHidden() or not(app:isFrontmost()) then
+    if app == nil or app:isHidden() or not app:isFrontmost() then
         -- アプリが起動していない、隠れている、または最前面でない場合は表示
         hs.application.launchOrFocus(appName)
     else
