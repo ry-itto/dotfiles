@@ -1,6 +1,6 @@
 source $ZPLUG_HOME/init.zsh
 
-## 構文バイライト
+## 構文ハイライト
 zplug "zsh-users/zsh-syntax-highlighting"
 
 ## 補完
@@ -9,7 +9,7 @@ zplug "zsh-users/zsh-completions"
 ## Emoji
 zplug "b4b4r07/emoji-cli"
 
-## Command 補完
+## コマンド履歴のサジェスト
 zplug "zsh-users/zsh-autosuggestions"
 
 if ! zplug check --verbose; then
