@@ -83,7 +83,7 @@ setopt no_flow_control
 
 # mise
 export PATH="$HOME/.local/bin:$PATH"
-eval "$(~/.local/bin/mise activate zsh)"
+(( $+commands[mise] )) && eval "$(mise activate zsh)"
 
 # flutter sdk
 export FLUTTER_ROOT="$(mise where flutter 2>/dev/null || echo '')"

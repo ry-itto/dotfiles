@@ -4,6 +4,6 @@ fbr() {
 }
 
 # cbn - print the current branch name
-cbn() {
+function cbn {
     git symbolic-ref --short HEAD
 }

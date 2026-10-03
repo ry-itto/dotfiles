@@ -1,3 +1,9 @@
+# Inherited FPATH can point to a removed zsh version (e.g. after brew upgrade zsh);
+# keep the current zsh's functions dir and drop entries that no longer exist.
+fpath=(/opt/homebrew/opt/zsh/share/zsh/functions /usr/share/zsh/$ZSH_VERSION/functions $fpath)
+fpath=(${^fpath}(N-/))
+typeset -U fpath
+
 source $HOME/.zsh/alias.zsh
 source $HOME/.zsh/env.zsh
 source $HOME/.zsh/style.zsh
