@@ -3,7 +3,7 @@ set -eu
 
 [[ -n "${CI:-}" ]] && exit 0
 
-INSTALLATION_DIR="$HOME/.cache/dein"
+INSTALLATION_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/dein/repos/github.com/Shougo/dein.vim"
 
 if [ -d "$INSTALLATION_DIR" ]; then
 	exit 0
